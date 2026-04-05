@@ -1,7 +1,7 @@
 # Design System: High-End Editorial for Legend Automotive
 
 ## 1. Overview & Creative North Star
-The Creative North Star for this design system is **"The Sovereign Gallery."** 
+The Creative North Star for this design system is **"The Sovereign Gallery."**
 
 Unlike standard e-commerce automotive sites that feel cluttered and transactional, this system treats every vehicle as a masterpiece within a curated exhibition. We move away from the "template" look of the reference image by embracing high-contrast tonal depth, expansive negative space, and intentional asymmetry. The layout should feel like a premium lifestyle magazine—authoritative, exclusive, and powerful. We use "Legend Automotive" not just as a name, but as an experience of permanence and luxury.
 
@@ -17,8 +17,8 @@ Our palette is anchored in deep, atmospheric blacks and metallic golds. This isn
 Solid 1px borders are strictly prohibited for sectioning. Boundaries must be defined solely through background color shifts. For example, a vehicle detail card (`surface_container_lowest`) should sit on a `surface_container_low` section to create distinction.
 
 ### The "Glass & Gradient" Rule
-To elevate the interface beyond a flat digital screen, floating elements (like price badges or navigation bars) should utilize **Glassmorphism**. 
-*   **Spec:** Use semi-transparent versions of `surface_container` with a `backdrop-blur` (20px-40px). 
+To elevate the interface beyond a flat digital screen, floating elements (like price badges or navigation bars) should utilize **Glassmorphism**.
+*   **Spec:** Use semi-transparent versions of `surface_container` with a `backdrop-blur` (20px-40px).
 *   **Soulful Gradients:** For Hero backgrounds or Primary CTAs, use a subtle linear gradient from `primary` (#f2ca50) to `primary_container` (#d4af37) at a 135-degree angle to mimic the sheen of polished gold.
 
 ## 3. Typography
@@ -32,7 +32,7 @@ Typography is the voice of the brand. We pair the geometric authority of **Manro
 In "The Sovereign Gallery," we do not use "drop shadows" in the traditional sense. We use light and material.
 
 ### The Layering Principle
-Depth is achieved by stacking surface tokens. 
+Depth is achieved by stacking surface tokens.
 *   **Low Importance:** `surface_container_lowest` (#0e0e0e).
 *   **High Importance:** `surface_bright` (#393939).
 By placing a "higher" surface on a "lower" background, we create a soft, natural lift that mimics architectural lighting.

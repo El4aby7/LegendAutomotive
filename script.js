@@ -667,8 +667,8 @@ function loadInventory() {
     initPriceSlider();
 
     // Render Filters
-    renderColorFilters();
     renderBrandFilters();
+    renderColorFilters();
 
     // Initial render
     filterInventory();
@@ -836,52 +836,62 @@ window.setConditionFilter = function(condition) {
     filterInventory();
 };
 
+/**
+ * Renders color filters dynamically based on available products
+ */
 function renderColorFilters() {
     const container = document.getElementById('color-filters-container');
     if (!container) return;
 
-    // Collect unique colors from all products
-    const colorMap = new Map();
+    // Extract unique colors from all products
+    const uniqueColorsMap = new Map();
     products.forEach(p => {
-        if (p.colors) {
-            p.colors.forEach(c => {
-                if (!colorMap.has(c.hex)) {
-                    colorMap.set(c.hex, currentLang === 'ar' ? c.name_ar : c.name);
+        if (p.colors && Array.isArray(p.colors)) {
+            p.colors.forEach(color => {
+                if (color.hex && color.name) {
+                    // Use hex as unique identifier (normalized to uppercase)
+                    const normalizedHex = color.hex.toUpperCase();
+                    if (!uniqueColorsMap.has(normalizedHex)) {
+                        uniqueColorsMap.set(normalizedHex, color);
+                    }
                 }
             });
         }
     });
 
-    if (colorMap.size === 0) {
+    const uniqueColors = Array.from(uniqueColorsMap.values());
+
+    if (uniqueColors.length === 0) {
         container.parentElement.classList.add('hidden');
         return;
     }
+
     container.parentElement.classList.remove('hidden');
 
-    container.innerHTML = Array.from(colorMap.entries()).map(([hex, name]) => {
+    container.innerHTML = uniqueColors.map(color => {
+        const hex = color.hex.toUpperCase();
         const isActive = activeColorFilters.includes(hex);
         return `
-            <button
+            <button type="button"
                 onclick="toggleColorFilter('${hex}', this)"
-                class="w-8 h-8 rounded-full border-2 transition-all ${isActive ? 'border-primary scale-110 shadow-lg' : 'border-gray-200 dark:border-white/10 hover:border-primary/50'}"
-                style="background-color: ${hex};"
-                title="${escapeHtml(name)}">
-            </button>
+                class="w-8 h-8 rounded-full border-2 transition-all ${isActive ? 'border-primary scale-110 shadow-lg' : 'border-gray-300 hover:border-gray-400 opacity-70 hover:opacity-100'}"
+                style="background-color: ${color.hex};"
+                title="${escapeHtml(color.name)}"
+            ></button>
         `;
     }).join('');
 }
+
 
 window.toggleColorFilter = function(hex, btn) {
     const index = activeColorFilters.indexOf(hex);
     if (index === -1) {
         activeColorFilters.push(hex);
-        btn.classList.add('border-primary', 'scale-110', 'shadow-lg');
-        btn.classList.remove('border-gray-200', 'dark:border-white/10');
     } else {
         activeColorFilters.splice(index, 1);
-        btn.classList.remove('border-primary', 'scale-110', 'shadow-lg');
-        btn.classList.add('border-gray-200', 'dark:border-white/10');
     }
+
+    renderColorFilters();
     filterInventory();
 };
 
@@ -899,30 +909,31 @@ function renderBrandFilters() {
 
     container.innerHTML = brands.map(brand => {
         const isActive = activeBrandFilters.includes(brand.id);
+        const btnClass = isActive
+            ? 'px-4 py-2 rounded-full bg-primary text-on-primary text-xs font-medium'
+            : 'px-4 py-2 rounded-full bg-surface-container-high text-on-surface text-xs font-medium hover:bg-primary hover:text-on-primary transition-colors';
+
         return `
             <button type="button"
                 onclick="toggleBrandFilter(${brand.id}, this)"
-                class="brand-filter-btn aspect-square rounded-xl border-2 transition-all overflow-hidden flex items-center justify-center p-2 bg-white dark:bg-gray-100
-                ${isActive ? 'border-primary ring-2 ring-primary/50' : 'border-gray-200 dark:border-gray-300 opacity-70 hover:opacity-100 hover:border-gray-300'}"
+                class="${btnClass}"
                 title="${escapeHtml(brand.name)}">
-                <img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name)}" class="max-w-full max-h-full object-contain pointer-events-none">
+                ${escapeHtml(brand.name)}
             </button>
         `;
     }).join('');
 }
-
 window.toggleBrandFilter = function(brandId, btn) {
     const index = activeBrandFilters.indexOf(brandId);
     if (index === -1) {
         activeBrandFilters.push(brandId);
-        btn.classList.remove('border-gray-200', 'dark:border-gray-300', 'opacity-70');
-        btn.classList.add('border-primary', 'ring-2', 'ring-primary/50');
     } else {
         activeBrandFilters.splice(index, 1);
-        btn.classList.remove('border-primary', 'ring-2', 'ring-primary/50');
-        btn.classList.add('border-gray-200', 'dark:border-gray-300', 'opacity-70');
     }
 
+    // Re-render to get the correct CSS classes based on state
+    renderBrandFilters();
+    renderColorFilters();
     filterInventory();
 };
 
@@ -954,17 +965,22 @@ function filterInventory() {
         // Brand check
         const matchesBrand = activeBrandFilters.length === 0 || activeBrandFilters.includes(p.brand_id);
 
+        // Color check
+        let matchesColor = true;
+        if (activeColorFilters.length > 0) {
+            if (!p.colors || !Array.isArray(p.colors) || p.colors.length === 0) {
+                matchesColor = false; // Product has no colors, so it can't match a color filter
+            } else {
+                const productHexes = p.colors.map(c => (c.hex || '').toUpperCase());
+                matchesColor = activeColorFilters.some(filterHex => productHexes.includes(filterHex));
+            }
+        }
+
         // Condition check
         const mileage = parseInt(p.details?.mileage?.replace(/[^0-9]/g, '')) || 0;
         let matchesCondition = true;
         if (conditionFilter === 'new') matchesCondition = mileage === 0;
         else if (conditionFilter === 'used') matchesCondition = mileage > 0;
-
-        // Color check
-        let matchesColor = activeColorFilters.length === 0;
-        if (!matchesColor && p.colors) {
-            matchesColor = p.colors.some(c => activeColorFilters.includes(c.hex));
-        }
 
         // Price check
         let matchesPrice = true;

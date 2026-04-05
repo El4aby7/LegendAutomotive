@@ -1,318 +1,287 @@
-<!--
-    Legend Automotive - Home Page
-    This page serves as the landing page for the dealership.
-
-    Structure:
-    - Head: Meta tags, Fonts, Tailwind CSS, Custom CSS.
-    - Body:
-        - Header: Navigation (Home, Inventory, Financing, Contact), Actions (Currency, Favorites, Language, Theme).
-        - Main:
-            - Hero Section: Large background image with branding and CTA buttons.
-            - Stats Section: Key metrics (Vehicles, Reviews, Support, Satisfaction).
-            - Trending Section: Dynamically loaded featured vehicles.
-        - Footer: Links, Social Media, Copyright.
-        - Scripts: Main application logic (script.js).
--->
 <!DOCTYPE html>
-<html lang="en" class="dark bg-background text-on-surface">
-<head>
-    <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-TRHFFRVS');</script>
-<!-- End Google Tag Manager -->
-    <meta name="google-site-verification" content="4h24Mx68CTwDs8eoLcT8rrquBxLV6ixNHKJfMgK29h4" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Legend Automotive - Premium Cars</title>
-    <meta name="description" content="Legend Automotive offers the best selection of premium and luxury vehicles. Browse our inventory and find your dream car today.">
-    <meta name="keywords" content="Legend Automotive, luxury cars, premium vehicles, car dealership, buy cars online">
-    <meta name="robots" content="index, follow">
 
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://el4aby7.github.io/LegendAutomotive/index.html">
-    <meta property="og:title" content="Legend Automotive - Premium Cars">
-    <meta property="og:description" content="Legend Automotive offers the best selection of premium and luxury vehicles. Browse our inventory and find your dream car today.">
-    <meta property="og:image" content="https://el4aby7.github.io/LegendAutomotive/assets/images/logo.jpeg">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://el4aby7.github.io/LegendAutomotive/index.html">
-    <meta property="twitter:title" content="Legend Automotive - Premium Cars">
-    <meta property="twitter:description" content="Legend Automotive offers the best selection of premium and luxury vehicles. Browse our inventory and find your dream car today.">
-    <meta property="twitter:image" content="https://el4aby7.github.io/LegendAutomotive/assets/images/logo.jpeg">
-
-
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
-
-    <!-- Tailwind CSS (CDN for development/static deployment) -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-                tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "surface": "#131313",
-                        "tertiary-container": "#ceb05a",
-                        "surface-variant": "#353535",
-                        "surface-container": "#20201f",
-                        "on-tertiary-fixed": "#241a00",
-                        "tertiary-fixed": "#ffe089",
-                        "on-secondary-fixed-variant": "#584400",
-                        "on-tertiary-fixed-variant": "#574400",
-                        "on-error-container": "#ffdad6",
-                        "primary": "#f2ca50",
-                        "error-container": "#93000a",
-                        "surface-container-lowest": "#0e0e0e",
-                        "secondary-container": "#b08c10",
-                        "surface-dim": "#131313",
-                        "primary-container": "#d4af37",
-                        "secondary": "#eac249",
-                        "tertiary": "#ebcc72",
-                        "primary-fixed": "#ffe088",
-                        "tertiary-fixed-dim": "#e3c46b",
-                        "secondary-fixed": "#ffe08b",
-                        "on-primary-fixed": "#241a00",
-                        "on-primary-container": "#554300",
-                        "on-secondary-fixed": "#241a00",
-                        "on-secondary-container": "#352800",
-                        "outline": "#99907c",
-                        "inverse-surface": "#e5e2e1",
-                        "on-primary-fixed-variant": "#574500",
-                        "surface-container-high": "#2a2a2a",
-                        "primary-fixed-dim": "#e9c349",
-                        "on-surface": "#e5e2e1",
-                        "inverse-primary": "#735c00",
-                        "outline-variant": "#4d4635",
-                        "surface-container-highest": "#353535",
-                        "error": "#ffb4ab",
-                        "surface-container-low": "#1c1b1b",
-                        "on-tertiary-container": "#554300",
-                        "on-error": "#690005",
-                        "on-primary": "#3c2f00",
-                        "secondary-fixed-dim": "#eac249",
-                        "surface-bright": "#393939",
-                        "inverse-on-surface": "#313030",
-                        "background": "#131313",
-                        "on-background": "#e5e2e1",
-                        "on-secondary": "#3d2f00",
-                        "on-surface-variant": "#d0c5af",
-                        "surface-tint": "#e9c349",
-                        "on-tertiary": "#3d2f00"
-                    },
-                    borderRadius: {
-                        "DEFAULT": "0.125rem",
-                        "lg": "0.25rem",
-                        "xl": "0.5rem",
-                        "full": "0.75rem"
-                    },
-                    fontFamily: {
-                        "headline": ["Manrope", "sans-serif"],
-                        "body": ["Inter", "sans-serif"],
-                        "label": ["Inter", "sans-serif"]
-                    },
-                },
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Legend Automotive | The Sovereign Gallery</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface": "#131313",
+                    "tertiary-container": "#ceb05a",
+                    "surface-variant": "#353535",
+                    "surface-container": "#20201f",
+                    "on-tertiary-fixed": "#241a00",
+                    "tertiary-fixed": "#ffe089",
+                    "on-secondary-fixed-variant": "#584400",
+                    "on-tertiary-fixed-variant": "#574400",
+                    "on-error-container": "#ffdad6",
+                    "primary": "#f2ca50",
+                    "error-container": "#93000a",
+                    "surface-container-lowest": "#0e0e0e",
+                    "secondary-container": "#b08c10",
+                    "surface-dim": "#131313",
+                    "primary-container": "#d4af37",
+                    "secondary": "#eac249",
+                    "tertiary": "#ebcc72",
+                    "primary-fixed": "#ffe088",
+                    "tertiary-fixed-dim": "#e3c46b",
+                    "secondary-fixed": "#ffe08b",
+                    "on-primary-fixed": "#241a00",
+                    "on-primary-container": "#554300",
+                    "on-secondary-fixed": "#241a00",
+                    "on-secondary-container": "#352800",
+                    "outline": "#99907c",
+                    "inverse-surface": "#e5e2e1",
+                    "on-primary-fixed-variant": "#574500",
+                    "surface-container-high": "#2a2a2a",
+                    "primary-fixed-dim": "#e9c349",
+                    "on-surface": "#e5e2e1",
+                    "inverse-primary": "#735c00",
+                    "outline-variant": "#4d4635",
+                    "surface-container-highest": "#353535",
+                    "error": "#ffb4ab",
+                    "surface-container-low": "#1c1b1b",
+                    "on-tertiary-container": "#554300",
+                    "on-error": "#690005",
+                    "on-primary": "#3c2f00",
+                    "secondary-fixed-dim": "#eac249",
+                    "surface-bright": "#393939",
+                    "inverse-on-surface": "#313030",
+                    "background": "#131313",
+                    "on-background": "#e5e2e1",
+                    "on-secondary": "#3d2f00",
+                    "on-surface-variant": "#d0c5af",
+                    "surface-tint": "#e9c349",
+                    "on-tertiary": "#3d2f00"
             },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
         },
-            },
-        }
+      }
     </script>
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/style.css">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(42, 42, 42, 0.4);
+            backdrop-filter: blur(20px);
+        }
+        .hero-gradient {
+            background: linear-gradient(180deg, rgba(19, 19, 19, 0) 0%, rgba(19, 19, 19, 1) 100%);
+        }
+        .gold-shimmer {
+            background: linear-gradient(135deg, #f2ca50 0%, #d4af37 100%);
+        }
+    </style>
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary">
-    <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRHFFRVS"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
-    <!-- Header Section -->
-    <nav class="sticky top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-xl border-b border-[#4d4635]/15">
-    <div class="bg-gradient-to-b from-[#131313] to-transparent">
-        <div class="flex justify-between items-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20">
-            <!-- Logo -->
-            <div class="flex items-center gap-2">
-                <a href="index.html" class="flex items-center gap-2">
-                    <div class="text-2xl font-bold tracking-tighter text-[#f2ca50] italic font-headline" data-i18n="header_title">Legend Automotive</div>
-                </a>
-            </div>
-
-            <!-- Navigation Menu -->
-            <div class="hidden md:flex items-center space-x-10">
-                <a href="index.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300">Home</a>
-                <a href="inventory.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" data-i18n="nav_inventory">Inventory</a>
-                <a href="financing.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" data-i18n="nav_financing">Financing</a>
-                <a href="contact.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" data-i18n="nav_contact">Contact</a>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex items-center gap-2 sm:gap-4">
-                <button onclick="toggleCurrency()" class="currency-toggle hidden md:flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-surface-container-high hover:bg-primary hover:text-on-primary transition-colors text-on-surface">
-                    <span class="currency-text">L.E</span>
-                </button>
-                <a href="favorites.html" class="flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors" title="Favorites">
-                    <span class="material-symbols-outlined">favorite</span>
-                </a>
-                <button onclick="toggleLanguage()" class="lang-toggle hidden md:flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors">
-                    <span class="font-bold text-sm">Ar</span>
-                </button>
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- Mobile Menu Container -->
-<div id="mobile-menu" class="hidden md:hidden border-t border-[#4d4635]/15 bg-background">
-    <div class="px-4 pt-2 pb-4 space-y-1">
-        <a href="index.html" class="block px-3 py-2 rounded-md text-base font-headline font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">Home</a>
-        <a href="inventory.html" class="block px-3 py-2 rounded-md text-base font-headline font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-i18n="nav_inventory">Inventory</a>
-        <a href="financing.html" class="block px-3 py-2 rounded-md text-base font-headline font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-i18n="nav_financing">Financing</a>
-        <a href="contact.html" class="block px-3 py-2 rounded-md text-base font-headline font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" data-i18n="nav_contact">Contact</a>
-    </div>
-
-    <div class="px-4 py-4 border-t border-[#4d4635]/15 flex flex-col gap-2">
-        <button onclick="toggleCurrency()" class="currency-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-            <span>Currency</span>
-            <span class="currency-text font-bold bg-surface-container-high px-2 py-0.5 rounded text-xs">L.E</span>
-        </button>
-        <button onclick="toggleLanguage()" class="lang-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-            <span>Language</span>
-            <span class="font-bold text-sm">Ar</span>
-        </button>
-    </div>
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#131313]/80 backdrop-blur-xl">
+<div class="bg-gradient-to-b from-[#131313] to-transparent">
+<div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+<div class="text-2xl font-bold tracking-tighter text-[#f2ca50] italic font-headline" data-i18n="header_title">Legend Automotive</div>
+<div class="hidden md:flex items-center space-x-10">
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-[#f2ca50] border-b-2 border-[#d4af37] pb-1" href="index.html">Home</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="inventory.html" data-i18n="nav_inventory">Explore</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="about.html">About</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="contact.html" data-i18n="nav_contact">Contact Us</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="admin.html">Admin</a>
 </div>
-
-    <main class="flex-grow">
-    <!-- Hero Section -->
-    <section class="relative h-screen w-full flex items-end overflow-hidden">
-        <div id="hero-carousel" class="absolute inset-0 z-0">
-            <img id="hero-bg-image" src="assets/images/hero-bg.jpg" alt="Luxury Car" class="w-full h-full object-cover object-center scale-105 hero-carousel-img active">
-            <img id="hero-bg-image-2" src="" alt="Luxury Car" class="w-full h-full object-cover object-center scale-105 hero-carousel-img hidden">
-            <div class="absolute inset-0 hero-gradient"></div>
-        </div>
-
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 w-full pt-24">
-            <div class="max-w-2xl">
-                <span class="inline-block px-3 py-1 mb-6 glass-card rounded-full text-xs font-headline font-bold tracking-[0.2em] uppercase text-primary border border-outline-variant/15" data-i18n="new_arrival">
-                    Premier Collection
-                </span>
-                <h1 class="font-headline text-5xl sm:text-7xl md:text-8xl font-extrabold tracking-tighter leading-tight mb-8" data-i18n="hero_title">
-                    Defining <br/><span class="text-primary italic">Permanence.</span>
-                </h1>
-                <p class="text-on-surface-variant max-w-md mb-8 text-lg" data-i18n="hero_subtitle">
-                    Experience the pinnacle of automotive engineering. Discover our exclusive collection.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                    <a href="inventory.html" class="gold-shimmer text-on-primary font-headline font-bold px-10 py-4 sm:py-5 rounded-md transition-all hover:brightness-110 active:scale-95 shadow-2xl text-center w-full sm:w-auto" data-i18n="btn_browse">
-                        Explore Inventory
-                    </a>
-                    <a href="contact.html" class="bg-surface-container-highest/40 backdrop-blur-md border border-outline-variant/15 text-on-surface font-headline font-semibold px-10 py-4 sm:py-5 rounded-md hover:bg-surface-container-highest transition-colors text-center w-full sm:w-auto" data-i18n="btn_contact">
-                        Personal Consult
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats / Bento Standard -->
-    <section class="py-20 sm:py-32 bg-surface-container-low">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16 sm:mb-20">
-                <h2 class="font-headline text-3xl sm:text-4xl md:text-5xl font-bold mb-4">The Legend Standard</h2>
-                <p class="text-on-surface-variant max-w-xl mx-auto">Beyond the sale, we provide an ecosystem of absolute confidence and radical transparency.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 auto-rows-min">
-                <!-- Bento Item 1 -->
-                <div class="md:col-span-8 bg-surface-container-highest/30 p-8 sm:p-12 rounded-2xl flex flex-col justify-between border border-outline-variant/10 hover:border-primary/20 transition-colors">
-                    <div>
-                        <span class="material-symbols-outlined text-primary text-4xl mb-6">payments</span>
-                        <h3 class="font-headline text-2xl sm:text-3xl font-bold mb-4">Radical Price Transparency</h3>
-                        <p class="text-on-surface-variant max-w-md leading-relaxed text-base sm:text-lg">No hidden fees, no negotiation friction. Our pricing engine uses global market data to ensure you pay the definitive value.</p>
-                    </div>
-                    <div class="mt-8">
-                        <span class="text-xs uppercase tracking-widest font-bold text-primary">Market Verified</span>
-                    </div>
-                </div>
-
-                <!-- Bento Item 2 -->
-                <div class="md:col-span-4 bg-primary p-8 sm:p-12 rounded-2xl flex flex-col justify-between text-on-primary">
-                    <span class="material-symbols-outlined text-4xl mb-6">verified_user</span>
-                    <div>
-                        <h3 class="font-headline text-xl sm:text-2xl font-bold mb-4 leading-tight">Absolute Assurance</h3>
-                        <p class="text-on-primary/80 font-medium leading-relaxed">Your satisfaction is our sovereign duty. Expertly curated inventory.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Trending Section (Dynamic Content) -->
-    <section class="py-20 sm:py-32 overflow-hidden bg-background">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-16">
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <h2 class="font-headline text-4xl sm:text-5xl font-extrabold tracking-tight">The Spotlight</h2>
-                <a href="inventory.html" class="text-primary font-headline font-bold text-sm tracking-widest uppercase flex items-center gap-2 hover:translate-x-2 transition-transform" data-i18n="btn_browse">
-                    View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                </a>
-            </div>
-        </div>
-
-        <!-- Dynamic Content Container -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-             <div id="trending-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                 <!-- Cards will be injected here via JavaScript -->
-             </div>
-        </div>
-    </section>
+<div class="flex items-center gap-4">
+<button id="mobile-menu-btn" class="scale-95 active:scale-90 transition-transform text-[#f2ca50]">
+<span class="material-symbols-outlined">person</span>
+</button>
+</div>
+</div>
+</div>
+</nav>
+<main>
+<!-- Hero Section -->
+<section class="relative h-screen w-full flex items-end overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img id="hero-bg-image" class="w-full h-full object-cover object-center scale-105 hero-carousel-img active" data-alt="luxury dark sleek electric sedan parked in a high-end minimalist architecture garage with dramatic gold rim lighting and deep shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ0mG099vYpqNDbpLyTIVB-qWTjo0OdFfTRPUsHn2tpTWRGAEFevvT9lHQ-poel8v9BCCyXsGvKJw8iD5V_OFoJAgcfx3SM4mifTY-Bq-9SGUoEYyGq11kzsFQlIbvMJ0wRT1Feh67PrJf40PFTIhPDWLihdQV0um1l1KSWyusNuLgQckK1t3QrdGREKTDAGyLO3Pi7x7A3mhpMez9T6S8m3qjM9m5fh0l8mAW07RFKy_h2Q7ZhNpe4Skxi3mbUq49A8CDGT8Cs1or"/>
+<img id="hero-bg-image-2" src="" class="w-full h-full object-cover object-center scale-105 hero-carousel-img hidden">
+<div class="absolute inset-0 hero-gradient"></div>
+</div>
+<div class="relative z-10 max-w-7xl mx-auto px-8 pb-24 w-full">
+<div class="max-w-2xl">
+<span class="inline-block px-3 py-1 mb-6 glass-card rounded-full text-xs font-headline font-bold tracking-[0.2em] uppercase text-primary border border-outline-variant/15">
+                        Premier Collection
+                    </span>
+<h1 class="font-headline text-7xl md:text-8xl font-extrabold tracking-tighter leading-tight mb-8">
+                        Defining <br/><span class="text-primary italic">Permanence.</span>
+</h1>
+<div class="flex flex-col md:flex-row gap-6 items-start md:items-center">
+<button class="gold-shimmer text-on-primary font-headline font-bold px-10 py-5 rounded-md transition-all hover:brightness-110 active:scale-95 shadow-2xl">
+                            Explore Inventory
+                        </button>
+<button class="bg-surface-container-highest/40 backdrop-blur-md border border-outline-variant/15 text-on-surface font-headline font-semibold px-10 py-5 rounded-md hover:bg-surface-container-highest transition-colors">
+                            Personal Consult
+                        </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Browse by Brand -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-8">
+<div class="flex justify-between items-end mb-16">
+<div>
+<h2 class="font-headline text-3xl font-bold tracking-tight mb-2">Curated Lineage</h2>
+<p class="text-on-surface-variant max-w-md">Access the world's most prestigious automotive engineering in one destination.</p>
+</div>
+<a class="text-primary font-headline font-bold text-sm tracking-widest uppercase flex items-center gap-2 hover:translate-x-2 transition-transform" href="#">
+                        View All Brands <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+<!-- Brand Chips -->
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">AVATR</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">BYD</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">MERCEDES</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">XIAOMI</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">CADILLAC</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">HYUNDAI</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">KGM</span>
+</div>
+<div class="bg-surface-container-high h-32 flex flex-col items-center justify-center rounded-xl group hover:bg-surface-bright transition-colors cursor-pointer border border-outline-variant/5">
+<span class="font-headline font-bold text-neutral-400 group-hover:text-primary transition-colors">VW</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Gallery (Asymmetric Scroller) -->
+<section class="py-32 overflow-hidden bg-background">
+<div class="max-w-7xl mx-auto px-8 mb-16">
+<h2 class="font-headline text-5xl font-extrabold tracking-tight">The Spotlight</h2>
+</div>
+<div id="trending-container" class="flex gap-8 px-8 overflow-x-auto no-scrollbar pb-12">
+<!-- injected by JS -->
+</div>
+</section>
+<!-- Why Choose Legend Automotive? (Bento Grid) -->
+<section class="py-32 bg-surface-container-low">
+<div class="max-w-7xl mx-auto px-8">
+<div class="text-center mb-20">
+<h2 class="font-headline text-4xl md:text-5xl font-bold mb-4">The Legend Standard</h2>
+<p class="text-on-surface-variant max-w-xl mx-auto">Beyond the sale, we provide an ecosystem of absolute confidence and radical transparency.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-12 grid-rows-2 gap-6 h-auto md:h-[600px]">
+<!-- Bento Item 1: Price Transparency -->
+<div class="md:col-span-8 bg-surface-container-highest/30 p-12 rounded-2xl flex flex-col justify-between border border-outline-variant/10 hover:border-primary/20 transition-colors">
+<div>
+<span class="material-symbols-outlined text-primary text-4xl mb-6">payments</span>
+<h3 class="font-headline text-3xl font-bold mb-4">Radical Price Transparency</h3>
+<p class="text-on-surface-variant max-w-md leading-relaxed text-lg">No hidden fees, no negotiation friction. Our pricing engine uses global market data to ensure you pay the definitive value, never a cent more.</p>
+</div>
+<div class="mt-8">
+<span class="text-xs uppercase tracking-widest font-bold text-primary">Market Verified</span>
+</div>
+</div>
+<!-- Bento Item 2: 7-Day Guarantee -->
+<div class="md:col-span-4 bg-primary p-12 rounded-2xl flex flex-col justify-between text-on-primary">
+<span class="material-symbols-outlined text-4xl">verified_user</span>
+<div>
+<h3 class="font-headline text-2xl font-bold mb-4 leading-tight">7-Day Absolute Assurance</h3>
+<p class="text-on-primary/80 font-medium leading-relaxed">Not the perfect fit? Return your vehicle within 7 days for a full, no-questions-asked refund. Your satisfaction is our sovereign duty.</p>
+</div>
+</div>
+<!-- Bento Item 3: Verified Details -->
+<div class="md:col-span-4 bg-surface-container-highest p-12 rounded-2xl border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary text-4xl mb-6">description</span>
+<h3 class="font-headline text-2xl font-bold mb-4">Verified Lineage</h3>
+<p class="text-on-surface-variant text-sm leading-relaxed">Every bolt, every service record, every mile. 150-point inspection protocols performed by master technicians.</p>
+</div>
+<!-- Bento Item 4: Personal Concierge -->
+<div class="md:col-span-8 bg-surface-container p-12 rounded-2xl flex items-center border border-outline-variant/10">
+<div class="flex-1">
+<h3 class="font-headline text-2xl font-bold mb-2">Legend Concierge</h3>
+<p class="text-on-surface-variant text-sm">24/7 priority support for all maintenance and logistics.</p>
+</div>
+<div class="flex -space-x-4">
+<div class="w-12 h-12 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional male automotive concierge portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfVZeZO4LubeRWyxENRozVUqRTcu6y6G4wfotEz9c5o17QJYiEVAXEhr7mkllL6rQYRdqNhfJLotgck1zrB1wXtouXXCTJ2QsLziZc5L2i317ICoCYw-7vWGInt6aXl2UL3G7QylLJks-wyyCyBTaLbPUa45fD4d3rDOA_Hfv351_kw46OYS0TzhmhZwSm3URsqtfv-zdiCsWJtyJvfrBYwbsfE4bHgjlFYXoZSt83NOzAEBWUZI1jvu9Nf406JxVcK3hhLYOE1aaG"/>
+</div>
+<div class="w-12 h-12 rounded-full border-2 border-surface-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional female luxury consultant portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFIAjEW8CkjLEz1l0di3tVzbB3BWn56vxFZIeLX3tfrOfD2G_RyjARG5Ebs4j2hzn_YgZu_-EP3CjOiLWv5Z-6tIvURb0S8VjARL8oM8n778DvDw8qh6hrqgH9_Mi0tBZ-iAPFc9rwoZbR07U0tjsvqlAfUevH0QP5znGCb3iWKcSM2OsiDe9kb_fNZuQ-WnaZMsnoGmzDX7kv41MH6xCl_Y-nXMro_4e1-Tyz8FE3L7osCMJiHyrn2wCoZL-GIa4TiH9tOyL_2Nvk"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
 </main>
-
-    <!-- Footer Section -->
-    <footer class="w-full border-t border-[#4d4635]/15 bg-[#0e0e0e]">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-6 sm:px-8 py-16 max-w-7xl mx-auto">
-        <div>
-            <div class="text-lg font-bold text-[#d4af37] font-headline italic mb-6">Legend Automotive</div>
-            <p class="font-body text-xs text-neutral-500 max-w-xs leading-loose" data-i18n="footer_rights">
-                The destination for automotive excellence. We curate the world's most powerful machines for those who demand nothing less than the legendary.
-            </p>
-        </div>
-        <div class="grid grid-cols-2 gap-8">
-            <div class="flex flex-col space-y-4">
-                <span class="font-headline text-xs font-bold uppercase tracking-widest text-[#f2ca50] mb-2">Explore</span>
-                <a class="font-body text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="inventory.html">Browse Vehicles</a>
-                <a class="font-body text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="financing.html">Financing</a>
-            </div>
-            <div class="flex flex-col space-y-4">
-                <span class="font-headline text-xs font-bold uppercase tracking-widest text-[#f2ca50] mb-2">Company</span>
-                <a class="font-body text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="contact.html">Contact Us</a>
-                <div class="flex items-center gap-2 mt-2">
-                    <a id="social-facebook" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">facebook</span></a>
-                    <a id="social-instagram" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">photo_camera</span></a>
-                    <a id="social-whatsapp" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">chat</span></a>
+<!-- Footer -->
+<footer class="w-full border-t border-[#4d4635]/15 bg-[#0e0e0e]">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-12 py-16 max-w-7xl mx-auto">
+<div>
+<div class="text-lg font-bold text-[#d4af37] font-headline italic mb-6" data-i18n="header_title">Legend Automotive</div>
+<p class="font-inter text-xs text-neutral-500 max-w-xs leading-loose">
+                    The destination for automotive excellence. We curate the world's most powerful machines for those who demand nothing less than the legendary.
+                </p>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col space-y-4">
+<span class="font-manrope text-xs font-bold uppercase tracking-widest text-[#f2ca50] mb-2">Explore</span>
+<a class="font-inter text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="#">Browse Brands</a>
+<a class="font-inter text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="#">Compare Vehicles</a>
+</div>
+<div class="flex flex-col space-y-4">
+<span class="font-manrope text-xs font-bold uppercase tracking-widest text-[#f2ca50] mb-2">Company</span>
+<a class="font-inter text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="#">About Us</a>
+<a class="font-inter text-xs text-neutral-500 hover:text-[#d4af37] hover:translate-x-1 transition-all duration-200 opacity-80 hover:opacity-100" href="#">Contact Details</a>
+</div>
+</div>
+<div class="flex flex-col justify-between">
+<div class="flex flex-col space-y-4">
+<span class="font-manrope text-xs font-bold uppercase tracking-widest text-[#f2ca50] mb-2">Stay Updated</span>
+<div class="flex">
+<input class="bg-surface-container-lowest border border-[#4d4635]/15 text-xs px-4 py-3 focus:border-[#f2ca50] focus:ring-0 w-full outline-none" placeholder="Email Address" type="email"/>
+<button class="bg-[#d4af37] text-on-primary px-4">
+<span class="material-symbols-outlined text-sm">east</span>
+</button>
+</div>
+</div>
+<div class="mt-8 font-inter text-xs text-neutral-500">
+                    © 2024 Legend Automotive. All Rights Reserved.
                 </div>
-            </div>
-        </div>
-        <div class="flex flex-col justify-between">
-            <div class="mt-8 font-body text-xs text-neutral-500">
-                © 2024 Legend Automotive. All Rights Reserved.
-            </div>
-        </div>
-    </div>
+</div>
+</div>
 </footer>
-
-    <!-- Main Script -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+<div id="mobile-menu" class="hidden absolute top-20 left-0 w-full bg-[#131313] p-4 flex flex-col space-y-4 shadow-lg border-b border-[#353535]"> <a href="index.html" class="text-white hover:text-[#f2ca50]">Home</a> <a href="inventory.html" class="text-white hover:text-[#f2ca50]">Explore</a> <a href="about.html" class="text-white hover:text-[#f2ca50]">About</a> <a href="contact.html" class="text-white hover:text-[#f2ca50]">Contact</a> <button onclick="toggleCurrency()" class="currency-toggle text-left text-white hover:text-[#f2ca50]">Currency: <span class="currency-text">L.E</span></button> <button onclick="toggleLanguage()" class="lang-toggle text-left text-white hover:text-[#f2ca50]">Language: En</button> </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
+</body></html>
