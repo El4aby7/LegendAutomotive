@@ -1,0 +1,260 @@
+<!--
+    AganceOnline - Inventory Page
+    This page displays the full list of vehicles with filtering options.
+
+    Structure:
+    - Head: Meta tags, Fonts, Tailwind CSS, Custom CSS.
+    - Body:
+        - Header: Navigation, Actions.
+        - Main:
+            - Title Section.
+            - Filters: Search bar and Category dropdown.
+            - Grid: Dynamically loaded vehicle cards.
+        - Footer (Not explicitly shown but script.js handles dynamic footer or it's just the end of page).
+-->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TRHFFRVS');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory - AganceOnline</title>
+    <meta name="description" content="AganceOnline offers the best selection of premium and luxury vehicles. Browse our inventory and find your dream car today.">
+    <meta name="keywords" content="AganceOnline, luxury cars, premium vehicles, car dealership, buy cars online">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://el4aby7.github.io/Aganceonline/inventory.html">
+    <meta property="og:title" content="Inventory - AganceOnline">
+    <meta property="og:description" content="AganceOnline offers the best selection of premium and luxury vehicles. Browse our inventory and find your dream car today.">
+    <meta property="og:image" content="https://el4aby7.github.io/Aganceonline/assets/images/logo.jpeg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://el4aby7.github.io/Aganceonline/inventory.html">
+    <meta property="twitter:title" content="Inventory - AganceOnline">
+    <meta property="twitter:description" content="AganceOnline offers the best selection of premium and luxury vehicles. Browse our inventory and find your dream car today.">
+    <meta property="twitter:image" content="https://el4aby7.github.io/Aganceonline/assets/images/logo.jpeg">
+
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ee2122",
+                        "primary-dark": "#c41213",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#150d17",
+                        "surface-dark": "#1a121d",
+                        "surface-card": "#201724",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                    },
+                },
+            },
+        }
+    </script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased transition-colors duration-300">
+    <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRHFFRVS"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-50 w-full border-b border-gray-200 dark:border-white/10 bg-white/95 dark:bg-background-dark/95 backdrop-blur-md">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <!-- Logo -->
+            <div class="flex items-center gap-2">
+                <a href="index.html" class="flex items-center gap-2">
+                    <img src="assets/images/logo.jpeg" alt="Logo" class="h-10 w-10 rounded-full object-cover border-2 border-primary">
+                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white" data-i18n="header_title">AganceOnline</span>
+                </a>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="index.html" class="text-sm font-medium text-slate-600 dark:text-gray-300 hover:text-primary transition-colors" data-i18n="nav_home">Home</a>
+                <a href="inventory.html" class="text-sm font-bold text-primary transition-colors" data-i18n="nav_inventory">Inventory</a>
+                <a href="financing.html" class="text-sm font-medium text-slate-600 dark:text-gray-300 hover:text-primary transition-colors" data-i18n="nav_financing">Financing</a>
+                <a href="contact.html" class="text-sm font-medium text-slate-600 dark:text-gray-300 hover:text-primary transition-colors" data-i18n="nav_contact">Contact</a>
+            </nav>
+
+            <!-- Action Buttons -->
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button onclick="toggleCurrency()" class="currency-toggle hidden md:flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-gray-100 dark:bg-white/10 hover:bg-primary hover:text-white transition-colors">
+                    <span class="currency-text">L.E</span>
+                </button>
+                <a href="favorites.html" class="flex items-center justify-center rounded-full p-2 text-slate-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-primary transition-colors" title="Favorites">
+                    <span class="material-symbols-outlined">favorite</span>
+                </a>
+                <button onclick="toggleLanguage()" class="lang-toggle hidden md:flex items-center justify-center rounded-full p-2 text-slate-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-primary transition-colors">
+                    <span class="font-bold text-sm">Ar</span>
+                </button>
+                <button onclick="toggleTheme()" class="theme-toggle hidden md:flex items-center justify-center rounded-full p-2 text-slate-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-primary transition-colors">
+                    <span class="theme-icon material-symbols-outlined">light_mode</span>
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center rounded-full p-2 text-slate-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Container -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 dark:border-white/10 bg-white/95 dark:bg-background-dark/95 backdrop-blur-md">
+            <div class="px-4 pt-2 pb-4 space-y-1">
+                <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" data-i18n="nav_home">Home</a>
+                <a href="inventory.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-900 dark:text-white hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" data-i18n="nav_inventory">Inventory</a>
+                <a href="financing.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" data-i18n="nav_financing">Financing</a>
+                <a href="contact.html" class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors" data-i18n="nav_contact">Contact</a>
+            </div>
+
+            <div class="px-4 py-4 border-t border-gray-200 dark:border-white/10 flex flex-col gap-2">
+                <button onclick="toggleCurrency()" class="currency-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <span>Currency</span>
+                    <span class="currency-text font-bold bg-gray-100 dark:bg-white/10 px-2 py-0.5 rounded text-xs">L.E</span>
+                </button>
+                <button onclick="toggleLanguage()" class="lang-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <span>Language</span>
+                    <span class="font-bold text-sm">Ar</span>
+                </button>
+                <button onclick="toggleTheme()" class="theme-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-gray-300 hover:text-primary hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+                    <span>Theme</span>
+                    <span class="theme-icon material-symbols-outlined text-lg">light_mode</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Page Title & Subtitle -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+                <h2 class="text-4xl md:text-5xl font-black tracking-tight text-slate-900 dark:text-white mb-2" data-i18n="nav_inventory">Inventory</h2>
+                <p class="text-gray-500 dark:text-gray-400 max-w-lg" data-i18n="hero_subtitle">Discover our curated collection of premium vehicles.</p>
+            </div>
+            <!-- Mobile Filter Toggle -->
+            <button id="mobile-filter-btn" class="lg:hidden flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-bold transition-all shadow-lg shadow-primary/20">
+                <span class="material-symbols-outlined">filter_list</span>
+                <span data-i18n="filters">Filters</span>
+            </button>
+        </div>
+
+        <!-- Main Layout: Sidebar + Grid -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Inventory Grid (Left on desktop) -->
+            <div class="flex-grow order-2 lg:order-1">
+                <div id="inventory-container" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+
+            <!-- Sidebar (Filters) (Right on desktop) -->
+            <aside id="filter-sidebar" class="hidden lg:block w-full lg:w-72 flex-shrink-0 space-y-8 order-1 lg:order-2">
+                <!-- Search -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400" data-i18n="search">Search</h3>
+                    <input type="text" id="search-input" data-i18n-placeholder="search_placeholder" placeholder="Search inventory..." class="w-full bg-white dark:bg-surface-card border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-primary transition-all">
+                </div>
+
+                <!-- Condition Filter -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400" data-i18n="condition">Condition</h3>
+                    <div class="flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl">
+                        <button onclick="setConditionFilter('all')" data-condition="all" class="condition-btn flex-1 py-2 text-xs font-bold rounded-lg bg-primary text-white shadow-sm transition-all" data-i18n="all">All</button>
+                        <button onclick="setConditionFilter('new')" data-condition="new" class="condition-btn flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 hover:text-primary transition-all" data-i18n="new">New</button>
+                        <button onclick="setConditionFilter('used')" data-condition="used" class="condition-btn flex-1 py-2 text-xs font-bold rounded-lg text-gray-500 dark:text-gray-400 hover:text-primary transition-all" data-i18n="used">Used</button>
+                    </div>
+                </div>
+
+                <!-- Category Filter -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400" data-i18n="category">Category</h3>
+                    <select id="filter-category" class="w-full bg-white dark:bg-surface-card border border-gray-200 dark:border-white/10 rounded-xl px-4 py-3 text-slate-900 dark:text-white focus:outline-none focus:border-primary transition-all">
+                        <option value="" data-i18n="filter_category_all">All Categories</option>
+                        <option value="Sedan" data-i18n="sedan">Sedan</option>
+                        <option value="SUV" data-i18n="suv">SUV</option>
+                        <option value="4x4" data-i18n="4x4">4x4</option>
+                        <option value="Coupe" data-i18n="coupe">Coupe</option>
+                        <option value="Convertible" data-i18n="convertible">Convertible</option>
+                        <option value="Sports" data-i18n="sports">Sports</option>
+                        <option value="Supercar" data-i18n="supercar">Supercar</option>
+                        <option value="New Arrival" data-i18n="new_arrival">New Arrival</option>
+                    </select>
+                </div>
+
+                <!-- Price Range Filter -->
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400" data-i18n="price_range">Price Range</h3>
+                        <span id="price-range-display" class="text-xs font-bold text-primary"></span>
+                    </div>
+                    <div class="px-2">
+                        <input type="range" id="price-slider" class="w-full h-2 bg-gray-200 dark:bg-white/10 rounded-lg appearance-none cursor-pointer accent-primary">
+                        <div class="flex justify-between mt-2 text-[10px] font-bold text-gray-500 uppercase">
+                            <span id="price-min">0</span>
+                            <span id="price-max">10M</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Color Filter -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400" data-i18n="colors">Colors</h3>
+                    <div id="color-filters-container" class="flex flex-wrap gap-2">
+                        <!-- Colors injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Brand Filter -->
+                <div class="space-y-3">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-gray-400" data-i18n="brands">Brands</h3>
+                    <div id="brand-filters-container" class="grid grid-cols-3 gap-3">
+                        <!-- Brands injected by JS -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Mobile Filter Overlay -->
+    <div id="mobile-filter-overlay" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="toggleMobileFilters()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-80 bg-background-light dark:bg-background-dark shadow-2xl p-6 overflow-y-auto translate-x-full transition-transform duration-300" id="mobile-filter-drawer">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-bold" data-i18n="filters">Filters</h2>
+                <button onclick="toggleMobileFilters()" class="text-gray-500 hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div id="mobile-filter-content" class="space-y-8">
+                <!-- Sidebar content will be moved here on mobile -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
