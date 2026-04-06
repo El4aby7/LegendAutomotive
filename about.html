@@ -98,11 +98,11 @@
                 Legend Automotive
             </div>
 <div class="hidden md:flex items-center gap-8">
-<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="#">Home</a>
-<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="#">Explore</a>
-<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-[#f2ca50] border-b-2 border-[#d4af37] pb-1" href="#">About</a>
-<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="#">Contact Us</a>
-<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="#">Admin</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="index.html">Home</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="inventory.html" data-i18n="nav_inventory">Explore</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-[#f2ca50] border-b-2 border-[#d4af37] pb-1" href="about.html">About</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="contact.html" data-i18n="nav_contact">Contact Us</a>
+<a class="font-manrope tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-[#f2ca50] transition-colors duration-300" href="admin.html">Admin</a>
 </div>
 <div class="flex items-center gap-4">
 <button class="material-symbols-outlined text-[#f2ca50] scale-95 active:scale-90 transition-transform">person</button>
@@ -290,7 +290,7 @@
 <footer class="w-full border-t border-[#4d4635]/15 bg-[#0e0e0e]">
 <div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-12 py-16 max-w-7xl mx-auto">
 <div>
-<div class="text-lg font-bold text-[#d4af37] mb-6">Legend Automotive</div>
+<div class="text-lg font-bold text-[#d4af37] mb-6" data-i18n="header_title">Legend Automotive</div>
 <p class="font-inter text-xs text-neutral-500 max-w-xs leading-relaxed">
                     The pinnacle of electric luxury and sovereign performance. Engineering masterpieces for those who demand the legendary.
                 </p>
@@ -313,4 +313,7 @@
 </div>
 </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<script src="script.js"></script>
 </body></html>
