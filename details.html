@@ -144,15 +144,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             </div>
 
             <!-- Navigation Menu -->
-            <div class="hidden md:flex items-center space-x-10">
-                <a href="index.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-primary transition-colors duration-300">Home</a>
+            <div class="hidden md:flex items-center space-x-10 rtl:space-x-reverse">
+                <a href="index.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-primary transition-colors duration-300" data-i18n="nav_home">Home</a>
                 <a href="inventory.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-primary transition-colors duration-300" data-i18n="nav_inventory">Inventory</a>
                 <a href="financing.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-primary transition-colors duration-300" data-i18n="nav_financing">Financing</a>
                 <a href="contact.html" class="font-headline tracking-wider uppercase text-sm font-semibold text-neutral-400 hover:text-primary transition-colors duration-300" data-i18n="nav_contact">Contact</a>
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex items-center gap-2 sm:gap-4">
+            <div class="flex items-center gap-2 sm:gap-4 rtl:space-x-reverse">
                 <button onclick="toggleCurrency()" class="currency-toggle hidden md:flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-surface-container-high hover:bg-primary hover:text-on-primary transition-colors text-on-surface">
                     <span class="currency-text">L.E</span>
                 </button>
@@ -161,6 +161,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 </a>
                 <button onclick="toggleLanguage()" class="lang-toggle hidden md:flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors">
                     <span class="font-bold text-sm">Ar</span>
+                </button>
+                <button onclick="toggleTheme()" class="hidden md:block scale-95 active:scale-90 transition-transform text-primary" title="Toggle Theme">
+                    <span class="material-symbols-outlined theme-icon">dark_mode</span>
                 </button>
                 <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors">
@@ -173,28 +176,45 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- Mobile Menu Container -->
 
-<div id="mobile-menu" class="hidden absolute top-20 left-0 w-full bg-background p-4 flex flex-col space-y-4 shadow-lg border-b border-surface-variant z-50">
-    <a href="index.html" class="text-on-background hover:text-primary">Home</a>
-    <a href="inventory.html" class="text-on-background hover:text-primary">Explore</a>
-    <a href="about.html" class="text-on-background hover:text-primary">About</a>
-    <a href="contact.html" class="text-on-background hover:text-primary">Contact</a>
-    <button onclick="toggleTheme()" class="text-left text-on-background hover:text-primary flex items-center gap-2"><span class="material-symbols-outlined theme-icon text-sm">dark_mode</span> Theme</button>
-    <button onclick="toggleCurrency()" class="currency-toggle text-left text-on-background hover:text-primary">Currency: <span class="currency-text">L.E</span></button>
-    <button onclick="toggleLanguage()" class="lang-toggle text-left text-on-background hover:text-primary">Language: En</button>
-</div>
-
-
-    <div class="px-4 py-4 border-t border-outline-variant/15 flex flex-col gap-2">
-        <button onclick="toggleCurrency()" class="currency-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-            <span>Currency</span>
-            <span class="currency-text font-bold bg-surface-container-high px-2 py-0.5 rounded text-xs">L.E</span>
-        </button>
-        <button onclick="toggleLanguage()" class="lang-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-            <span>Language</span>
-            <span class="font-bold text-sm">Ar</span>
+<!-- Floating Mobile Menu Structure -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+<div id="mobile-menu-drawer" class="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-background z-[101] translate-x-full transition-transform duration-400 shadow-2xl flex flex-col text-on-surface">
+    <div class="flex justify-between items-center p-6 border-b border-outline-variant/10">
+        <div class="text-xl font-bold tracking-tighter text-primary italic font-headline" data-i18n="header_title">Legend Automotive</div>
+        <button id="mobile-menu-close" class="p-2 text-primary active:scale-90 transition-transform">
+            <span class="material-symbols-outlined">close</span>
         </button>
     </div>
+    <div class="flex-grow overflow-y-auto p-6 space-y-8">
+        <nav class="flex flex-col space-y-6 text-on-surface">
+            <a href="index.html" class="text-2xl font-headline font-bold hover:text-primary transition-colors" data-i18n="nav_home">Home</a>
+            <a href="inventory.html" class="text-2xl font-headline font-bold hover:text-primary transition-colors" data-i18n="nav_inventory">Explore</a>
+            <a href="about.html" class="text-2xl font-headline font-bold hover:text-primary transition-colors" data-i18n="nav_about">About</a>
+            <a href="contact.html" class="text-2xl font-headline font-bold hover:text-primary transition-colors" data-i18n="nav_contact">Contact</a>
+        </nav>
+        <div class="pt-8 border-t border-outline-variant/10 space-y-6">
+            <button onclick="toggleTheme()" class="w-full flex items-center justify-between group">
+                <span class="text-lg font-medium">Theme</span>
+                <span class="material-symbols-outlined theme-icon text-primary group-active:scale-90 transition-transform">dark_mode</span>
+            </button>
+            <button onclick="toggleCurrency()" class="w-full flex items-center justify-between group">
+                <span class="text-lg font-medium">Currency</span>
+                <span class="currency-text font-bold text-primary">L.E</span>
+            </button>
+            <button onclick="toggleLanguage()" class="w-full flex items-center justify-between group">
+                <span class="text-lg font-medium">Language</span>
+                <span class="font-bold text-primary">Ar</span>
+            </button>
+        </div>
+    </div>
+    <div class="p-6 border-t border-outline-variant/10 flex justify-center gap-6">
+        <a id="drawer-social-instagram" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">public</span></a>
+        <a id="drawer-social-facebook" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">shield</span></a>
+        <a id="drawer-social-tiktok" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">verified_user</span></a>
+    </div>
 </div>
+
+
 
     <main class="flex-grow px-4 md:px-8 lg:px-20 py-8 max-w-[1600px] mx-auto w-full" id="details-container">
         <!-- Breadcrumb Navigation -->
@@ -221,19 +241,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <video id="main-video" controls class="hidden w-full h-full object-cover"></video>
                 </div>
 
-                <!-- Color Selection (Moved from right column) -->
-                <div id="color-selection-container" class="hidden mt-2">
-
-<div class="flex items-center gap-4">
-<button onclick="toggleTheme()" class="hidden md:block scale-95 active:scale-90 transition-transform text-primary" title="Toggle Theme">
-    <span class="material-symbols-outlined theme-icon">dark_mode</span>
-</button>
-<button id="mobile-menu-btn" class="scale-95 active:scale-90 transition-transform text-primary">
-<span class="material-symbols-outlined">menu</span>
-</button>
-</div>
-
-                        <p id="selected-color-name" class="text-sm font-bold text-slate-700 dark:text-gray-300"></p>
+                <!-- Color Selection -->
+                <div id="color-selection-container" class="hidden mt-4 bg-surface-container-low p-4 rounded-xl border border-outline-variant/10">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold uppercase tracking-widest text-primary" data-i18n="filter_color">Available Colors</span>
+                        <p id="selected-color-name" class="text-sm font-bold text-on-surface"></p>
+                    </div>
+                    <div id="color-options" class="flex flex-wrap gap-3">
+                        <!-- Color buttons injected by JS -->
                     </div>
                 </div>
 
@@ -384,8 +399,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     <!-- Main Script -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/script.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="db/products.js"></script>
+    <script src="db/brands.js"></script>
+    <script src="db/messages.js"></script>
+    <script src="db/settings.js"></script>
+    <script src="script.js"></script>
 
 <!-- Floating Contact Button -->
 <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">

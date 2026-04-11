@@ -4,9 +4,8 @@
 // Ensure the Supabase library is loaded before this script runs.
 // Add <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> to your HTML head.
 
-// TODO: Provide the new Supabase URL and Anon Key below
-const SUPABASE_URL = "";
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://pxawiulologsydofnipi.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_7SGhRP_E4JJGA8YfJJldag_AcQFYIwZ";
 
 // Expose key globally for admin usage
 window.SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;

@@ -9,6 +9,8 @@ let currentBrands = [];
 let currentColors = [];
 let currentOrderMode = "inventory"; // 'inventory' or 'home'
 let isOrderChanged = false;
+let editingId = null;
+let editingBrandId = null;
 
 // --- UI Utilities ---
 window.showToast = function (message, type = "success") {
@@ -27,9 +29,6 @@ window.showToast = function (message, type = "success") {
   } else if (type === "error") {
     toast.classList.add("bg-red-600", "dark:bg-red-700");
     icon = "error";
-  } else if (type === "warning") {
-    toast.classList.add("bg-yellow-500", "dark:bg-yellow-600");
-    icon = "warning";
   } else {
     toast.classList.add("bg-gray-800", "dark:bg-gray-700");
   }
@@ -70,7 +69,6 @@ window.showConfirm = function (message, onConfirm) {
   const modal = document.getElementById("custom-confirm-modal");
   const inner = modal.querySelector("div");
 
-  // Trigger animation
   setTimeout(() => {
     modal.classList.remove("opacity-0");
     inner.classList.remove("scale-95");
@@ -82,25 +80,17 @@ window.showConfirm = function (message, onConfirm) {
     setTimeout(() => modal.remove(), 300);
   };
 
-  document
-    .getElementById("confirm-cancel-btn")
-    .addEventListener("click", closeModal);
+  document.getElementById("confirm-cancel-btn").addEventListener("click", closeModal);
   document.getElementById("confirm-ok-btn").addEventListener("click", () => {
     closeModal();
     onConfirm();
   });
 };
 
-// Simple XSS protection
 const escapeHtml = (unsafe) => {
   if (unsafe === null || unsafe === undefined) return "";
   if (typeof unsafe !== "string") unsafe = String(unsafe);
-  return unsafe
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 };
 
 // DOM Elements
@@ -113,6 +103,7 @@ const tabProducts = document.getElementById("tab-products");
 const tabBrands = document.getElementById("tab-brands");
 const tabInquiries = document.getElementById("tab-inquiries");
 const tabSettings = document.getElementById("tab-settings");
+
 const viewProducts = document.getElementById("view-products");
 const viewBrands = document.getElementById("view-brands");
 const viewInquiries = document.getElementById("view-inquiries");
@@ -120,14 +111,40 @@ const viewSettings = document.getElementById("view-settings");
 
 const productModal = document.getElementById("product-modal");
 const productForm = document.getElementById("product-form");
-
 const brandModal = document.getElementById("brand-modal");
 const brandForm = document.getElementById("brand-form");
 
+function updateTranslations() {
+  const lang = localStorage.getItem("language") || "en";
+  const translations = window.translationsData;
+  if (!translations) return;
+
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    if (translations[lang][key]) {
+      if (el.tagName === "INPUT" && el.getAttribute("placeholder")) {
+        el.placeholder = translations[lang][key];
+      } else {
+        el.textContent = translations[lang][key];
+      }
+    }
+  });
+
+  document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+  document.documentElement.lang = lang;
+}
+
 async function initAdmin() {
-  // 1. Auth State Listener
-  supabase.auth.onAuthStateChange((event, session) => {
-    console.log("Auth State:", event);
+  // Load translations
+  try {
+    const res = await fetch("data/translations.json");
+    window.translationsData = await res.json();
+    updateTranslations();
+  } catch (e) {
+    console.error("Failed to load translations", e);
+  }
+
+  window.supabase.auth.onAuthStateChange((event, session) => {
     if (session) {
       currentUser = session.user;
       showDashboard();
@@ -137,7 +154,6 @@ async function initAdmin() {
     }
   });
 
-  // 2. Bind Events
   document.getElementById("login-form").addEventListener("submit", handleLogin);
   document.getElementById("logout-btn").addEventListener("click", handleLogout);
 
@@ -146,1683 +162,425 @@ async function initAdmin() {
   tabInquiries.addEventListener("click", () => switchTab("inquiries"));
   tabSettings.addEventListener("click", () => switchTab("settings"));
 
-  const filterSelect = document.getElementById("filter-inquiries");
-  if (filterSelect) {
-    filterSelect.addEventListener("change", filterInquiries);
-  }
+  document.getElementById("filter-inquiries")?.addEventListener("change", filterInquiries);
 
-  document
-    .getElementById("add-product-btn")
-    .addEventListener("click", () => openModal());
+  document.getElementById("add-product-btn").addEventListener("click", () => openModal());
   document.getElementById("modal-close").addEventListener("click", closeModal);
   document.getElementById("modal-cancel").addEventListener("click", closeModal);
-  document
-    .getElementById("product-form")
-    .addEventListener("submit", handleSaveProduct);
+  productForm.addEventListener("submit", handleSaveProduct);
 
-  document
-    .getElementById("add-brand-btn")
-    .addEventListener("click", () => openBrandModal());
-  document
-    .getElementById("brand-modal-close")
-    .addEventListener("click", closeBrandModal);
-  document
-    .getElementById("brand-modal-cancel")
-    .addEventListener("click", closeBrandModal);
-  document
-    .getElementById("brand-form")
-    .addEventListener("submit", handleSaveBrand);
+  document.getElementById("add-brand-btn").addEventListener("click", () => openBrandModal());
+  document.getElementById("brand-modal-close").addEventListener("click", closeBrandModal);
+  document.getElementById("brand-modal-cancel").addEventListener("click", closeBrandModal);
+  brandForm.addEventListener("submit", handleSaveBrand);
 
-  // Order Mode Toggles
-  document
-    .getElementById("order-mode-inventory")
-    .addEventListener("click", () => switchOrderMode("inventory"));
-  document
-    .getElementById("order-mode-home")
-    .addEventListener("click", () => switchOrderMode("home"));
-  document
-    .getElementById("save-order-btn")
-    .addEventListener("click", handleSaveOrder);
+  document.getElementById("order-mode-inventory").addEventListener("click", () => switchOrderMode("inventory"));
+  document.getElementById("order-mode-home").addEventListener("click", () => switchOrderMode("home"));
+  document.getElementById("save-order-btn").addEventListener("click", handleSaveOrder);
 
-  // Settings
-  document
-    .getElementById("settings-form")
-    .addEventListener("submit", handleSaveSettings);
+  document.getElementById("settings-form").addEventListener("submit", handleSaveSettings);
+
+  // Language toggle for admin
+  const langToggle = document.createElement("button");
+  langToggle.className = "px-3 py-1 rounded border border-gray-300 dark:border-white/10 text-xs font-bold";
+  langToggle.textContent = localStorage.getItem("language") === "ar" ? "En" : "عربي";
+  langToggle.onclick = () => {
+    const newLang = localStorage.getItem("language") === "ar" ? "en" : "ar";
+    localStorage.setItem("language", newLang);
+    location.reload();
+  };
+  document.querySelector("#user-info")?.prepend(langToggle);
 }
 
 // --- Order Management ---
-
 function switchOrderMode(mode) {
-  if (isOrderChanged) {
-    if (!confirm("You have unsaved order changes. Switch anyway?")) return;
-  }
-
+  if (isOrderChanged && !confirm("Unsaved changes. Switch anyway?")) return;
   currentOrderMode = mode;
-
-  // UI Update
   const invBtn = document.getElementById("order-mode-inventory");
   const homeBtn = document.getElementById("order-mode-home");
 
   if (mode === "inventory") {
-    invBtn.classList.add("bg-primary", "text-white", "shadow-sm");
-    invBtn.classList.remove("text-gray-500");
-    homeBtn.classList.remove("bg-primary", "text-white", "shadow-sm");
-    homeBtn.classList.add("text-gray-500");
+    invBtn.classList.add("bg-primary", "text-white");
+    homeBtn.classList.remove("bg-primary", "text-white");
   } else {
-    homeBtn.classList.add("bg-primary", "text-white", "shadow-sm");
-    homeBtn.classList.remove("text-gray-500");
-    invBtn.classList.remove("bg-primary", "text-white", "shadow-sm");
-    invBtn.classList.add("text-gray-500");
+    homeBtn.classList.add("bg-primary", "text-white");
+    invBtn.classList.remove("bg-primary", "text-white");
   }
-
   loadProducts();
-}
-
-let draggedProductIndex = null;
-let touchStartY = 0;
-let touchElement = null;
-
-window.handleProductDragStart = function (e) {
-  draggedProductIndex = parseInt(e.currentTarget.dataset.index);
-  e.dataTransfer.effectAllowed = "move";
-  setTimeout(() => e.currentTarget.classList.add("opacity-50"), 0);
-};
-
-window.handleProductDragOver = function (e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = "move";
-};
-
-window.handleProductDragEnter = function (e) {
-  e.preventDefault();
-  const target = e.currentTarget;
-  if (parseInt(target.dataset.index) !== draggedProductIndex) {
-    target.classList.add("bg-primary/10");
-  }
-};
-
-window.handleProductDragLeave = function (e) {
-  const target = e.currentTarget;
-  target.classList.remove("bg-primary/10");
-};
-
-window.handleProductDrop = function (e) {
-  e.preventDefault();
-  const targetIndex = parseInt(e.currentTarget.dataset.index);
-  if (draggedProductIndex !== null && draggedProductIndex !== targetIndex) {
-    const item = currentProducts.splice(draggedProductIndex, 1)[0];
-    currentProducts.splice(targetIndex, 0, item);
-    isOrderChanged = true;
-    renderProducts(currentProducts);
-    updateSaveOrderBtnVisibility();
-  }
-  e.currentTarget.classList.remove("bg-primary/10");
-};
-
-window.handleProductDragEnd = function (e) {
-  e.currentTarget.classList.remove("opacity-50");
-  draggedProductIndex = null;
-  document.querySelectorAll("#products-table-body tr").forEach((el) => {
-    el.classList.remove("bg-primary/10");
-  });
-};
-
-// --- Touch Event Handlers for iOS Support ---
-window.handleProductTouchStart = function (e) {
-  touchStartY = e.touches[0].clientY;
-  touchElement = e.currentTarget;
-  draggedProductIndex = parseInt(touchElement.dataset.index);
-  touchElement.classList.add("opacity-50");
-};
-
-window.handleProductTouchMove = function (e) {
-  if (draggedProductIndex === null || !touchElement) return;
-
-  const currentY = e.touches[0].clientY;
-  const rows = document.querySelectorAll("#products-table-body tr");
-  let isOverRow = false;
-
-  rows.forEach((row) => {
-    const rect = row.getBoundingClientRect();
-    const rowIndex = parseInt(row.dataset.index);
-
-    // Check if touch is over this row
-    if (
-      currentY >= rect.top &&
-      currentY <= rect.bottom &&
-      rowIndex !== draggedProductIndex
-    ) {
-      row.classList.add("bg-primary/10");
-      isOverRow = true;
-    } else if (rowIndex !== draggedProductIndex) {
-      row.classList.remove("bg-primary/10");
-    }
-  });
-
-  // Only prevent default if we're actually dragging/hovering over a row
-  if (isOverRow) {
-    e.preventDefault();
-  }
-};
-
-window.handleProductTouchEnd = function (e) {
-  if (draggedProductIndex === null || !touchElement) return;
-
-  const endY = e.changedTouches[0].clientY;
-  const rows = document.querySelectorAll("#products-table-body tr");
-  let targetIndex = draggedProductIndex;
-
-  // Find which row we ended on
-  rows.forEach((row) => {
-    const rect = row.getBoundingClientRect();
-    if (endY >= rect.top && endY <= rect.bottom) {
-      targetIndex = parseInt(row.dataset.index);
-    }
-  });
-
-  // Perform the reorder if dropped on a different item
-  if (draggedProductIndex !== null && draggedProductIndex !== targetIndex) {
-    const item = currentProducts.splice(draggedProductIndex, 1)[0];
-    currentProducts.splice(targetIndex, 0, item);
-    isOrderChanged = true;
-    renderProducts(currentProducts);
-    updateSaveOrderBtnVisibility();
-  }
-
-  // Clean up
-  document.querySelectorAll("#products-table-body tr").forEach((el) => {
-    el.classList.remove("bg-primary/10", "opacity-50");
-  });
-  draggedProductIndex = null;
-  touchElement = null;
-  touchStartY = 0;
-};
-
-function updateSaveOrderBtnVisibility() {
-  const btn = document.getElementById("save-order-btn");
-  if (isOrderChanged) {
-    btn.classList.remove("hidden");
-  } else {
-    btn.classList.add("hidden");
-  }
 }
 
 async function handleSaveOrder() {
   const btn = document.getElementById("save-order-btn");
-  const originalText = btn.innerHTML;
-  btn.innerHTML = "Saving...";
   btn.disabled = true;
-
   try {
-    const orderCol =
-      currentOrderMode === "home" ? "order_home" : "order_inventory";
-
-    // Prepare batch updates
-    const updates = currentProducts.map((p, index) => ({
-      id: p.id,
-      [orderCol]: index,
-    }));
-
-    // Supabase doesn't support bulk PATCH with different values per row in a single call.
-    // To avoid overwriting entire rows with upsert (which requires all columns),
-    // we perform individual updates. We use Promise.all for better performance.
-    await Promise.all(
-      updates.map((update) =>
-        supabase
-          .from("products")
-          .update({ [orderCol]: update[orderCol] })
-          .eq("id", update.id)
-          .then(({ error }) => {
-            if (error) throw error;
-          }),
-      ),
-    );
-
-    showToast("Order saved successfully!", "success");
+    const type = currentOrderMode === "home" ? "spotlight" : "explore";
+    await Promise.all(currentProducts.map((p, index) => window.productsDb.updateOrder(p.id, type, index)));
+    showToast("Order saved successfully!");
     isOrderChanged = false;
     updateSaveOrderBtnVisibility();
-    loadProducts(); // Reload to be sure
   } catch (err) {
-    console.error(err);
-    showToast("Failed to save order: " + err.message, "error");
-  } finally {
-    btn.innerHTML = originalText;
-    btn.disabled = false;
-  }
+    showToast("Failed to save order", "error");
+  } finally { btn.disabled = false; }
 }
 
-// --- Auth Logic ---
+function updateSaveOrderBtnVisibility() {
+  const btn = document.getElementById("save-order-btn");
+  if (isOrderChanged) btn.classList.remove("hidden");
+  else btn.classList.add("hidden");
+}
 
+// --- Auth ---
 function showLogin() {
   loginSection.classList.remove("hidden");
   dashboardSection.classList.add("hidden");
   userInfo.classList.add("hidden");
 }
-
 function showDashboard() {
   loginSection.classList.add("hidden");
   dashboardSection.classList.remove("hidden");
   userInfo.classList.remove("hidden");
   userEmailSpan.textContent = currentUser.email;
-
   loadProducts();
 }
-
 async function handleLogin(e) {
   e.preventDefault();
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
-  const errorDiv = document.getElementById("login-error");
-
-  errorDiv.classList.add("hidden");
-  errorDiv.textContent = "";
-
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
+  const { error } = await window.supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    errorDiv.textContent = error.message;
-    errorDiv.classList.remove("hidden");
+    const errDiv = document.getElementById("login-error");
+    errDiv.textContent = error.message;
+    errDiv.classList.remove("hidden");
   }
 }
+async function handleLogout() { await window.supabase.auth.signOut(); }
 
-async function handleLogout() {
-  await supabase.auth.signOut();
-}
-
-// --- Tab Logic ---
-
+// --- Tabs ---
 function switchTab(tab) {
-  // Hide all
-  viewProducts.classList.add("hidden");
-  viewBrands.classList.add("hidden");
-  viewInquiries.classList.add("hidden");
-  viewSettings.classList.add("hidden");
+  [viewProducts, viewBrands, viewInquiries, viewSettings].forEach(v => v.classList.add("hidden"));
+  [tabProducts, tabBrands, tabInquiries, tabSettings].forEach(t => t.classList.remove("border-primary", "text-primary"));
 
-  // Reset tabs
-  [tabProducts, tabBrands, tabInquiries, tabSettings].forEach((t) => {
-    t.classList.remove("border-primary", "text-primary");
-    t.classList.add("border-transparent", "text-gray-500");
-  });
-
-  // Show active
-  if (tab === "products") {
-    viewProducts.classList.remove("hidden");
-    tabProducts.classList.add("border-primary", "text-primary");
-    tabProducts.classList.remove("border-transparent", "text-gray-500");
-    loadProducts();
-  } else if (tab === "brands") {
-    viewBrands.classList.remove("hidden");
-    tabBrands.classList.add("border-primary", "text-primary");
-    tabBrands.classList.remove("border-transparent", "text-gray-500");
-    loadBrands();
-  } else if (tab === "inquiries") {
-    viewInquiries.classList.remove("hidden");
-    tabInquiries.classList.add("border-primary", "text-primary");
-    tabInquiries.classList.remove("border-transparent", "text-gray-500");
-    loadInquiries();
-  } else if (tab === "settings") {
-    viewSettings.classList.remove("hidden");
-    tabSettings.classList.add("border-primary", "text-primary");
-    tabSettings.classList.remove("border-transparent", "text-gray-500");
-    loadSettings();
-  }
+  if (tab === "products") { viewProducts.classList.remove("hidden"); tabProducts.classList.add("border-primary", "text-primary"); loadProducts(); }
+  else if (tab === "brands") { viewBrands.classList.remove("hidden"); tabBrands.classList.add("border-primary", "text-primary"); loadBrands(); }
+  else if (tab === "inquiries") { viewInquiries.classList.remove("hidden"); tabInquiries.classList.add("border-primary", "text-primary"); loadInquiries(); }
+  else if (tab === "settings") { viewSettings.classList.remove("hidden"); tabSettings.classList.add("border-primary", "text-primary"); loadSettings(); }
 }
 
-// --- Product Logic ---
-
+// --- Products ---
 async function loadProducts() {
   const tbody = document.getElementById("products-table-body");
-  tbody.innerHTML =
-    '<tr><td colspan="7" class="px-6 py-4 text-center">Loading...</td></tr>';
-
-  const orderCol =
-    currentOrderMode === "home" ? "order_home" : "order_inventory";
-
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .order(orderCol, { ascending: true });
-
-  if (error) {
-    console.error(error);
-    tbody.innerHTML =
-      '<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Failed to load products</td></tr>';
-    return;
-  }
-
-  currentProducts = data;
-  renderProducts(data);
-  isOrderChanged = false;
-  updateSaveOrderBtnVisibility();
-
-  // Also load brands in the background for the product modal
-  loadBrandsForModal();
-}
-
-async function loadBrandsForModal() {
-  const { data, error } = await supabase
-    .from("brands")
-    .select("*")
-    .order("name", { ascending: true });
-
-  if (!error && data) {
-    currentBrands = data;
-  }
+  tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">Loading...</td></tr>';
+  try {
+    const data = currentOrderMode === 'home' ? await window.productsDb.getSpotlight() : await window.productsDb.getAll();
+    currentProducts = data;
+    renderProducts(data);
+    isOrderChanged = false;
+    updateSaveOrderBtnVisibility();
+    loadBrandsForModal();
+  } catch (e) { tbody.innerHTML = '<tr><td colspan="9" class="text-center text-red-500 py-4">Error loading products</td></tr>'; }
 }
 
 function renderProducts(products) {
   const tbody = document.getElementById("products-table-body");
-  if (products.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="7" class="px-6 py-4 text-center">No vehicles found.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = products
-    .map(
-      (p, index) => `
-        <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-move"
-            draggable="true"
-            data-index="${index}"
-            ondragstart="handleProductDragStart(event)"
-            ondragover="handleProductDragOver(event)"
-            ondrop="handleProductDrop(event)"
-            ondragenter="handleProductDragEnter(event)"
-            ondragleave="handleProductDragLeave(event)"
-            ondragend="handleProductDragEnd(event)"
-            ontouchstart="handleProductTouchStart(event)"
-            ontouchmove="handleProductTouchMove(event)"
-            ontouchend="handleProductTouchEnd(event)">
-            <td class="px-6 py-4">
-                <span class="material-symbols-outlined text-gray-400 text-[20px]">drag_indicator</span>
-            </td>
-            <td class="px-6 py-4">
-                <div class="h-10 w-16 rounded overflow-hidden bg-gray-200">
-                    <img src="${escapeHtml(p.image_url)}" class="h-full w-full object-cover" alt="car">
-                </div>
-            </td>
-            <td class="px-6 py-4 font-medium">${escapeHtml(p.name)}</td>
-            <td class="px-6 py-4">
-                <input type="checkbox" ${p.is_sold_out ? "checked" : ""} onchange="toggleSoldOut(${p.id}, this)" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer" title="Toggle Sold Out">
-            </td>
-            <td class="px-6 py-4">${p.price_egp ? p.price_egp.toLocaleString() + " L.E" : "-"}</td>
-            <td class="px-6 py-4"><span class="bg-gray-100 dark:bg-white/10 px-2 py-1 rounded text-xs">${escapeHtml(p.category) || "-"}</span></td>
-            <td class="px-6 py-4">
-                ${p.featured ? '<span class="text-green-500 font-bold text-xs">Featured</span>' : '<span class="text-gray-400 text-xs">Standard</span>'}
-            </td>
-            <td class="px-6 py-4 text-right">
-                <button onclick="editProduct(${p.id})" class="text-blue-500 hover:text-blue-400 font-medium text-xs mr-3">Edit</button>
-                <button onclick="deleteProduct(${p.id})" class="text-red-500 hover:text-red-400 font-medium text-xs">Delete</button>
-            </td>
-        </tr>
-    `,
-    )
-    .join("");
+  if (products.length === 0) { tbody.innerHTML = '<tr><td colspan="9" class="text-center py-4">No products found</td></tr>'; return; }
+  tbody.innerHTML = products.map((p, idx) => `
+    <tr draggable="true" ondragstart="window.handleProductDragStart(event)" data-index="${idx}" class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-move">
+      <td class="px-6 py-4"><span class="material-symbols-outlined text-gray-400">drag_indicator</span></td>
+      <td class="px-6 py-4"><img src="${p.image_url}" class="h-10 w-16 object-cover rounded"></td>
+      <td class="px-6 py-4 font-medium">${escapeHtml(p.name)}<br><span class="text-xs text-gray-500">${escapeHtml(p.name_ar || '')}</span></td>
+      <td class="px-6 py-4"><input type="checkbox" ${p.is_sold_out ? 'checked' : ''} onchange="toggleSoldOut(${p.id}, this)" class="rounded text-primary"></td>
+      <td class="px-6 py-4">${p.price_egp?.toLocaleString()} L.E</td>
+      <td class="px-6 py-4"><span class="bg-gray-100 dark:bg-white/10 px-2 py-1 rounded text-xs">${escapeHtml(p.category)}</span></td>
+      <td class="px-6 py-4">${escapeHtml(p.brands?.name || '-')}</td>
+      <td class="px-6 py-4">${p.is_spotlight ? '<span class="text-green-500 font-bold">Spotlight</span>' : 'Standard'}</td>
+      <td class="px-6 py-4 text-right">
+        <button onclick="editProduct(${p.id})" class="text-blue-500 mr-3">Edit</button>
+        <button onclick="deleteProduct(${p.id})" class="text-red-500">Delete</button>
+      </td>
+    </tr>
+  `).join('');
 }
 
-// Expose to window for onclick handlers
-window.editProduct = function (id) {
-  const product = currentProducts.find((p) => p.id === id);
-  if (product) openModal(product);
+window.handleProductDragStart = function(e) {
+    e.dataTransfer.setData("text/plain", e.target.dataset.index);
+};
+document.getElementById("products-table-body")?.addEventListener("dragover", e => e.preventDefault());
+document.getElementById("products-table-body")?.addEventListener("drop", e => {
+    e.preventDefault();
+    const fromIdx = parseInt(e.dataTransfer.getData("text/plain"));
+    const toIdx = parseInt(e.target.closest("tr").dataset.index);
+    if (fromIdx === toIdx) return;
+    const item = currentProducts.splice(fromIdx, 1)[0];
+    currentProducts.splice(toIdx, 0, item);
+    isOrderChanged = true;
+    renderProducts(currentProducts);
+    updateSaveOrderBtnVisibility();
+});
+
+window.toggleSoldOut = async (id, cb) => {
+    try { await window.productsDb.update(id, { is_sold_out: cb.checked }); showToast("Status updated"); }
+    catch (e) { cb.checked = !cb.checked; showToast("Update failed", "error"); }
 };
 
-window.deleteProduct = function (id) {
-  showConfirm("Are you sure you want to delete this vehicle?", async () => {
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) {
-      showToast("Error deleting: " + error.message, "error");
-    } else {
-      showToast("Vehicle deleted successfully.", "success");
-      loadProducts();
-    }
-  });
-};
-
-window.toggleSoldOut = async function (id, checkbox) {
-  const is_sold_out = checkbox.checked;
-  const { error } = await supabase
-    .from("products")
-    .update({ is_sold_out })
-    .eq("id", id);
-
-  if (error) {
-    showToast("Error updating status: " + error.message, "error");
-    checkbox.checked = !is_sold_out;
-  } else {
-    showToast("Status updated successfully.", "success");
-    // Update local state
-    const p = currentProducts.find((prod) => prod.id === id);
-    if (p) p.is_sold_out = is_sold_out;
-  }
-};
-
-// --- Modal & Form Logic ---
-
-let editingId = null;
-let currentGallery = [];
-
-window.addColor = function () {
-  const id = Date.now();
-  currentColors.push({
-    id: id,
-    name: "",
-    name_ar: "",
-    hex: "#000000",
-    image_url: "",
-    gallery: [],
-    is_default: currentColors.length === 0,
-  });
-  renderColors();
-};
-
-window.deleteColor = function (id) {
-  currentColors = currentColors.filter((c) => c.id !== id);
-  renderColors();
-};
-
-window.updateColorField = function (id, field, value) {
-  const color = currentColors.find((c) => c.id === id);
-  if (color) {
-    color[field] = value;
-  }
-};
-
-window.setDefaultColor = function (id) {
-  currentColors.forEach((c) => (c.is_default = c.id === id));
-  renderColors();
-};
-
-window.deleteColorGalleryImage = function (colorId, imgIndex) {
-  const color = currentColors.find((c) => c.id === colorId);
-  if (color) {
-    color.gallery.splice(imgIndex, 1);
-    renderColors();
-  }
-};
-
-window.addSocialLink = function (type, value = "") {
-  const container = document.querySelector(
-    `#container-social-${type} .social-links-list`,
-  );
-  if (!container) return;
-
-  const div = document.createElement("div");
-  div.className = "flex items-center gap-2";
-  div.innerHTML = `
-        <input type="${type === "phone" ? "tel" : "url"}" value="${escapeHtml(value)}" class="w-full rounded-lg bg-gray-50 dark:bg-black/20 border border-gray-300 dark:border-white/10 px-4 py-2 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all" placeholder="${type === "phone" ? "+20..." : "https://..."}">
-        <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-400 p-2">
-            <span class="material-symbols-outlined text-[20px]">delete</span>
-        </button>
-    `;
-  container.appendChild(div);
-};
-
-async function handleColorImageUpload(colorId, file) {
-  const color = currentColors.find((c) => c.id === colorId);
-  if (!color || !file) return;
-
-  const fileExt = file.name.split(".").pop();
-  const fileName = `color-main-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-  const filePath = `public/${fileName}`;
-
-  try {
-    const { error: uploadError } = await supabase.storage
-      .from("vehicle-images")
-      .upload(filePath, file);
-
-    if (uploadError) throw uploadError;
-
-    const { data: publicData } = supabase.storage
-      .from("vehicle-images")
-      .getPublicUrl(filePath);
-
-    color.image_url = publicData.publicUrl;
-    renderColors();
-  } catch (err) {
-    console.error("Color main image upload error:", err);
-    showToast("Error uploading color main image", "error");
-  }
-}
-
-async function handleColorGalleryUpload(colorId, files) {
-  const color = currentColors.find((c) => c.id === colorId);
-  if (!color || files.length === 0) return;
-
-  for (const file of files) {
-    const fileExt = file.name.split(".").pop();
-    const isVideoFile = file.type.startsWith("video/");
-    const prefix = isVideoFile ? "video" : "gallery";
-    const fileName = `color-${prefix}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `public/${fileName}`;
-
-    try {
-      const { error: uploadError } = await supabase.storage
-        .from("vehicle-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicData } = supabase.storage
-        .from("vehicle-images")
-        .getPublicUrl(filePath);
-
-      color.gallery.push(publicData.publicUrl);
-    } catch (err) {
-      console.error("Color gallery upload error:", err);
-      showToast("Error uploading color gallery image", "error");
-    }
-  }
-  renderColors();
-}
-
-function renderColors() {
-  const container = document.getElementById("colors-container");
-  if (!container) return;
-
-  if (currentColors.length === 0) {
-    container.innerHTML =
-      '<p class="text-sm text-gray-500 italic">No colors added yet.</p>';
-    return;
-  }
-
-  container.innerHTML = currentColors
-    .map((color) => {
-      const colorId = color.id;
-      return `
-            <div class="bg-gray-50 dark:bg-white/5 p-4 rounded-xl border border-gray-200 dark:border-white/10 space-y-4">
-                <div class="flex flex-wrap gap-4 items-start">
-                    <div class="flex-1 min-w-[150px]">
-                        <label class="block text-xs font-medium mb-1">Color Name (EN)</label>
-                        <input type="text" value="${escapeHtml(color.name)}" oninput="updateColorField(${colorId}, 'name', this.value)" class="w-full rounded-lg bg-white dark:bg-black/20 border border-gray-300 dark:border-white/10 px-3 py-1.5 text-sm outline-none">
-                    </div>
-                    <div class="flex-1 min-w-[150px]">
-                        <label class="block text-xs font-medium mb-1">Color Name (AR)</label>
-                        <input type="text" value="${escapeHtml(color.name_ar)}" oninput="updateColorField(${colorId}, 'name_ar', this.value)" class="w-full rounded-lg bg-white dark:bg-black/20 border border-gray-300 dark:border-white/10 px-3 py-1.5 text-sm outline-none" dir="rtl">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium mb-1">Hex Code</label>
-                        <div class="flex items-center gap-2">
-                            <input type="color" value="${color.hex}" oninput="updateColorField(${colorId}, 'hex', this.value); this.nextElementSibling.value = this.value;" class="w-8 h-8 rounded border-0 p-0 bg-transparent cursor-pointer">
-                            <input type="text" value="${color.hex}" oninput="updateColorField(${colorId}, 'hex', this.value); this.previousElementSibling.value = this.value;" class="w-20 rounded-lg bg-white dark:bg-black/20 border border-gray-300 dark:border-white/10 px-2 py-1.5 text-xs outline-none uppercase">
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="radio" name="default-color" ${color.is_default ? "checked" : ""} onchange="setDefaultColor(${colorId})" class="w-4 h-4 text-primary focus:ring-primary">
-                        <label class="text-xs font-medium">Default</label>
-                    </div>
-                    <button type="button" onclick="deleteColor(${colorId})" class="mt-6 p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors">
-                        <span class="material-symbols-outlined text-[20px]">delete</span>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium mb-1">Color Main Image (Thumbnail)</label>
-                        <div class="flex items-center gap-3">
-                            <div class="h-12 w-16 bg-white dark:bg-black/20 rounded border border-gray-300 dark:border-white/10 overflow-hidden flex-shrink-0">
-                                <img src="${color.image_url || "https://placehold.co/600x400?text=None"}" class="h-full w-full object-cover">
-                            </div>
-                            <input type="file" accept="image/*" onchange="handleColorImageUpload(${colorId}, this.files[0])" class="flex-grow text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary file:text-white hover:file:bg-red-600 transition-all">
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-medium mb-2">Color Specific Gallery (Optional - if empty, main gallery will be used)</label>
-                    <div class="grid grid-cols-4 md:grid-cols-6 gap-2 mb-2">
-                        ${color.gallery
-                          .map((url, idx) => {
-                            const isVid = url.match(/\.(mp4|webm|ogg)$/i);
-                            return `
-                                <div class="relative group aspect-square rounded-lg overflow-hidden border border-gray-200 dark:border-white/10">
-                                    ${isVid ? `<video src="${url}" class="w-full h-full object-cover" muted></video>` : `<img src="${url}" class="w-full h-full object-cover">`}
-                                    <button type="button" onclick="deleteColorGalleryImage(${colorId}, ${idx})" class="absolute top-0.5 right-0.5 bg-red-600 text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <span class="material-symbols-outlined text-[12px]">close</span>
-                                    </button>
-                                </div>
-                            `;
-                          })
-                          .join("")}
-                    </div>
-                    <input type="file" multiple accept="image/*,video/mp4,video/webm,video/ogg" onchange="handleColorGalleryUpload(${colorId}, this.files)" class="w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-gray-200 dark:file:bg-white/10 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-300 transition-all">
-                </div>
-            </div>
-        `;
-    })
-    .join("");
-}
-
-function openModal(product = null) {
-  const title = document.getElementById("modal-title");
-  const form = document.getElementById("product-form");
-
-  // Always reset form and state first to prevent cross-contamination between products
-  form.reset();
-  editingId = null;
-  currentGallery = [];
-  currentColors = [];
-  document.getElementById("p-brand-id").value = "";
-  document.getElementById("p-diagnostics-current").classList.add("hidden");
-
-  // Initialize Brand Selector
-  renderBrandSelector(product ? product.brand_id : null);
-
-  if (product) {
-    editingId = product.id;
-    title.textContent = "Edit Vehicle";
-
-    document.getElementById("p-name").value = product.name;
-    document.getElementById("p-price").value = product.price_egp || "";
-    document.getElementById("p-category").value = product.category;
-    document.getElementById("p-origin").value = product.origin || "";
-    document.getElementById("p-featured").checked = product.featured;
-    document.getElementById("p-sold-out").checked =
-      product.is_sold_out || false;
-    document.getElementById("p-desc").value = product.description;
-    document.getElementById("p-desc-ar").value = product.description_ar || "";
-
-    // Handle nested details
-    if (product.details) {
-      document.getElementById("p-mileage").value =
-        product.details.mileage || "";
-      document.getElementById("p-trans").value =
-        product.details.transmission || "";
-      document.getElementById("p-fuel").value = product.details.fuel || "";
-      document.getElementById("p-version").value =
-        product.details.version || "";
-      document.getElementById("p-upon-request").checked =
-        product.details.upon_request || false;
-
-      const diagCurrent = document.getElementById("p-diagnostics-current");
-      if (product.details.diagnostics_url) {
-        diagCurrent.classList.remove("hidden");
-        diagCurrent.querySelector("a").href = product.details.diagnostics_url;
-      } else {
-        diagCurrent.classList.add("hidden");
-      }
-    }
-
-    // Handle Gallery - Use a copy to avoid mutating the original product object
-    currentGallery = product.gallery ? [...product.gallery] : [];
-
-    // Handle Colors - Use a copy and assign temp IDs for UI management
-    currentColors = (product.colors || []).map((c, idx) => ({
-      ...c,
-      id: Date.now() + idx,
-    }));
-  } else {
-    editingId = null;
-    title.textContent = "Add New Vehicle";
-  }
-
-  // Refresh UI
-  renderGallery();
-  renderColors();
-  productModal.classList.remove("hidden");
-}
-
-function renderBrandSelector(selectedBrandId) {
-  const container = document.getElementById("p-brand-container");
-  const brandIdInput = document.getElementById("p-brand-id");
-
-  if (currentBrands.length === 0) {
-    container.innerHTML =
-      '<span class="text-sm text-gray-500">No brands available. Please add a brand first.</span>';
-    brandIdInput.value = "";
-    return;
-  }
-
-  container.innerHTML = currentBrands
-    .map((brand) => {
-      const isSelected = selectedBrandId === brand.id;
-      return `
-            <button type="button"
-                onclick="selectBrand(${brand.id}, this)"
-                class="brand-select-btn flex-none w-20 h-20 rounded-xl border-2 transition-all overflow-hidden flex items-center justify-center p-2 bg-white dark:bg-gray-100
-                ${isSelected ? "border-primary ring-2 ring-primary/50" : "border-gray-200 dark:border-gray-300 opacity-70 hover:opacity-100 hover:border-gray-300"}">
-                <img src="${escapeHtml(brand.logo_url)}" alt="${escapeHtml(brand.name)}" class="max-w-full max-h-full object-contain">
-            </button>
-        `;
-    })
-    .join("");
-
-  if (selectedBrandId) {
-    brandIdInput.value = selectedBrandId;
-  }
-}
-
-window.selectBrand = function (id, btn) {
-  document.getElementById("p-brand-id").value = id;
-
-  // Update visuals
-  document.querySelectorAll(".brand-select-btn").forEach((b) => {
-    b.classList.remove("border-primary", "ring-2", "ring-primary/50");
-    b.classList.add("border-gray-200", "dark:border-gray-300", "opacity-70");
-  });
-
-  btn.classList.remove("border-gray-200", "dark:border-gray-300", "opacity-70");
-  btn.classList.add("border-primary", "ring-2", "ring-primary/50");
-};
-
-function closeModal() {
-  productModal.classList.add("hidden");
-  // Clear state on close to be extra safe
-  const form = document.getElementById("product-form");
-  if (form) form.reset();
-  editingId = null;
-  currentGallery = [];
-  currentColors = [];
-}
-
-function renderGallery() {
-  const container = document.getElementById("gallery-preview");
-  container.innerHTML = currentGallery
-    .map((url, index) => {
-      const isVideo = url.match(/\.(mp4|webm|ogg)$/i);
-      const mediaTag = isVideo
-        ? `<video src="${escapeHtml(url)}" class="h-full w-full object-cover pointer-events-none" muted></video>
-               <div class="absolute inset-0 flex items-center justify-center bg-black/20 pointer-events-none">
-                   <span class="material-symbols-outlined text-white text-[24px]">play_circle</span>
-               </div>`
-        : `<img src="${escapeHtml(url)}" class="h-full w-full object-cover pointer-events-none" alt="gallery" draggable="false">`;
-
-      return `
-        <div class="relative group h-24 w-full rounded-lg overflow-hidden border border-gray-200 dark:border-white/10 cursor-move"
-             draggable="true"
-             data-index="${index}"
-             ondragstart="handleDragStart(event)"
-             ondragover="handleDragOver(event)"
-             ondrop="handleDrop(event)"
-             ondragenter="handleDragEnter(event)"
-             ondragleave="handleDragLeave(event)"
-             ondragend="handleDragEnd(event)">
-            ${mediaTag}
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                <div class="bg-black/50 rounded-full p-2 flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-[24px]">drag_indicator</span>
-                </div>
-            </div>
-            <button type="button" onclick="deleteGalleryImage(${index})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-700 z-10">
-                <span class="material-symbols-outlined text-[16px]">close</span>
-            </button>
-        </div>
-        `;
-    })
-    .join("");
-}
-
-let draggedGalleryIndex = null;
-
-window.handleDragStart = function (e) {
-  draggedGalleryIndex = parseInt(e.currentTarget.dataset.index);
-  e.dataTransfer.effectAllowed = "move";
-  e.dataTransfer.setData("text/plain", draggedGalleryIndex);
-  setTimeout(() => e.currentTarget.classList.add("opacity-50"), 0);
-};
-
-window.handleDragOver = function (e) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = "move";
-};
-
-window.handleDragEnter = function (e) {
-  e.preventDefault();
-  const target = e.currentTarget;
-  if (parseInt(target.dataset.index) !== draggedGalleryIndex) {
-    target.classList.add("border-primary", "border-2");
-    target.classList.remove("border-gray-200", "dark:border-white/10");
-  }
-};
-
-window.handleDragLeave = function (e) {
-  const target = e.currentTarget;
-  target.classList.remove("border-primary", "border-2");
-  target.classList.add("border-gray-200", "dark:border-white/10");
-};
-
-window.handleDrop = function (e) {
-  e.preventDefault();
-  const targetIndex = parseInt(e.currentTarget.dataset.index);
-  if (draggedGalleryIndex !== null && draggedGalleryIndex !== targetIndex) {
-    // Reorder currentGallery array
-    const item = currentGallery.splice(draggedGalleryIndex, 1)[0];
-    currentGallery.splice(targetIndex, 0, item);
-    renderGallery();
-  }
-
-  e.currentTarget.classList.remove("border-primary", "border-2");
-  e.currentTarget.classList.add("border-gray-200", "dark:border-white/10");
-};
-
-window.handleDragEnd = function (e) {
-  e.currentTarget.classList.remove("opacity-50");
-  draggedGalleryIndex = null;
-  document.querySelectorAll("#gallery-preview > div").forEach((el) => {
-    el.classList.remove("border-primary", "border-2");
-    el.classList.add("border-gray-200", "dark:border-white/10");
-  });
-};
-
-window.deleteGalleryImage = function (index) {
-  showConfirm("Remove this image from gallery?", () => {
-    currentGallery.splice(index, 1);
-    renderGallery();
-  });
-};
+window.editProduct = (id) => { const p = currentProducts.find(x => x.id === id); if (p) openModal(p); };
+window.deleteProduct = (id) => showConfirm("Delete this vehicle?", async () => {
+    try { await window.productsDb.delete(id); showToast("Deleted"); loadProducts(); }
+    catch (e) { showToast("Delete failed", "error"); }
+});
 
 async function handleSaveProduct(e) {
-  e.preventDefault();
-  const btn = document.getElementById("save-btn");
-  const originalText = btn.textContent;
-  btn.textContent = "Saving...";
-  btn.disabled = true;
+    e.preventDefault();
+    const btn = document.getElementById("save-btn");
+    btn.disabled = true;
+    try {
+        const payload = {
+            name: document.getElementById("p-name").value,
+            name_ar: document.getElementById("p-name-ar").value,
+            price_egp: parseFloat(document.getElementById("p-price").value),
+            category: document.getElementById("p-category").value,
+            origin: document.getElementById("p-origin").value,
+            brand_id: parseInt(document.getElementById("p-brand-id").value),
+            is_spotlight: document.getElementById("p-featured").checked,
+            is_upon_request: document.getElementById("p-upon-request").checked,
+            is_sold_out: document.getElementById("p-sold-out").checked,
+            description: document.getElementById("p-desc").value,
+            description_ar: document.getElementById("p-desc-ar").value,
+            mileage: document.getElementById("p-mileage").value,
+            transmission: document.getElementById("p-trans").value,
+            fuel_type: document.getElementById("p-fuel").value,
+            version: document.getElementById("p-version").value,
+            color: document.getElementById("p-color").value,
+            color_ar: document.getElementById("p-color-ar").value
+        };
 
-  try {
-    // 1. Collect Data
-    const name = document.getElementById("p-name").value;
-    const price = parseFloat(document.getElementById("p-price").value);
-    const category = document.getElementById("p-category").value;
-    const origin = document.getElementById("p-origin").value;
-    const featured = document.getElementById("p-featured").checked;
-    const isSoldOut = document.getElementById("p-sold-out").checked;
-    const description = document.getElementById("p-desc").value;
-    const descriptionAr = document.getElementById("p-desc-ar").value;
-    const brandId = document.getElementById("p-brand-id").value;
-    const uponRequest = document.getElementById("p-upon-request").checked;
-
-    if (!brandId) {
-      showToast("Please select a brand.", "warning");
-      btn.textContent = originalText;
-      btn.disabled = false;
-      return;
-    }
-
-    const details = {
-      mileage: document.getElementById("p-mileage").value,
-      transmission: document.getElementById("p-trans").value,
-      fuel: document.getElementById("p-fuel").value,
-      version: document.getElementById("p-version").value,
-      upon_request: uponRequest,
-    };
-
-    // 2. Handle Image Upload
-    const fileInput = document.getElementById("p-image");
-    let imageUrl = null;
-
-    if (fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `public/${fileName}`;
-
-      const { data, error: uploadError } = await supabase.storage
-        .from("vehicle-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicData } = supabase.storage
-        .from("vehicle-images")
-        .getPublicUrl(filePath);
-
-      imageUrl = publicData.publicUrl;
-    }
-
-    // 2.1 Handle Diagnostics PDF Upload
-    const diagInput = document.getElementById("p-diagnostics");
-    let diagnosticsUrl = null;
-
-    if (diagInput.files.length > 0) {
-      const file = diagInput.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `diag-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `public/${fileName}`;
-
-      const { data, error: uploadError } = await supabase.storage
-        .from("vehicle-diagnostics")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicData } = supabase.storage
-        .from("vehicle-diagnostics")
-        .getPublicUrl(filePath);
-
-      diagnosticsUrl = publicData.publicUrl;
-    }
-
-    // 3. Prepare DB Object
-    if (diagnosticsUrl) {
-      details.diagnostics_url = diagnosticsUrl;
-    } else if (editingId) {
-      const existingProduct = currentProducts.find((p) => p.id === editingId);
-      if (
-        existingProduct &&
-        existingProduct.details &&
-        existingProduct.details.diagnostics_url
-      ) {
-        details.diagnostics_url = existingProduct.details.diagnostics_url;
-      }
-    }
-
-    const payload = {
-      name,
-      price_egp: price,
-      brand_id: parseInt(brandId),
-      category,
-      origin,
-      featured,
-      is_sold_out: isSoldOut,
-      description,
-      details,
-      name_ar: null, // No longer auto-translated
-      description_ar: descriptionAr,
-      category_ar: null, // No longer auto-translated
-      details_ar: {
-        mileage: null,
-        transmission: null,
-        fuel: null,
-        version: null,
-      },
-    };
-
-    // For new products, we want them to appear at the end (or start)
-    // Let's set the order to a very high number or use current count
-    if (!editingId) {
-      payload.order_inventory = currentProducts.length;
-      payload.order_home = currentProducts.length;
-    }
-
-    if (imageUrl) {
-      payload.image_url = imageUrl;
-    } else if (!editingId) {
-      // New product but no image? Use placeholder
-      payload.image_url = "https://placehold.co/600x400?text=No+Image";
-    }
-
-    // 2b. Handle Gallery Upload
-    const galleryInput = document.getElementById("p-gallery-upload");
-    if (galleryInput.files.length > 0) {
-      for (const file of galleryInput.files) {
-        const fileExt = file.name.split(".").pop();
-        const isVideoFile = file.type.startsWith("video/");
-        const prefix = isVideoFile ? "video" : "gallery";
-        const fileName = `${prefix}-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-        const filePath = `public/${fileName}`;
-
-        const { error: uploadError } = await supabase.storage
-          .from("vehicle-images")
-          .upload(filePath, file);
-
-        if (uploadError) {
-          console.error("Gallery upload error:", uploadError);
-          continue;
+        const file = document.getElementById("p-image").files[0];
+        if (file) {
+            const path = `public/${Date.now()}-${file.name}`;
+            await window.supabase.storage.from("vehicle-images").upload(path, file);
+            payload.image_url = window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
         }
 
-        const { data: publicData } = supabase.storage
-          .from("vehicle-images")
-          .getPublicUrl(filePath);
+        const diag = document.getElementById("p-diagnostics").files[0];
+        if (diag) {
+            const path = `diagnostics/${Date.now()}-${diag.name}`;
+            await window.supabase.storage.from("vehicle-images").upload(path, diag);
+            payload.diagnostics_url = window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
+        }
 
-        currentGallery.push(publicData.publicUrl);
-      }
+        if (editingId) await window.productsDb.update(editingId, payload);
+        else await window.productsDb.create(payload);
+
+        showToast("Saved successfully");
+        closeModal();
+        loadProducts();
+    } catch (err) { showToast("Save failed", "error"); }
+    finally { btn.disabled = false; }
+}
+
+function openModal(p = null) {
+    editingId = p ? p.id : null;
+    productForm.reset();
+    document.getElementById("modal-title").textContent = p ? "Edit Vehicle" : "Add Vehicle";
+    if (p) {
+        document.getElementById("p-name").value = p.name || "";
+        document.getElementById("p-name-ar").value = p.name_ar || "";
+        document.getElementById("p-price").value = p.price_egp || "";
+        document.getElementById("p-category").value = p.category || "";
+        document.getElementById("p-origin").value = p.origin || "";
+        document.getElementById("p-brand-id").value = p.brand_id || "";
+        document.getElementById("p-featured").checked = p.is_spotlight || false;
+        document.getElementById("p-upon-request").checked = p.is_upon_request || false;
+        document.getElementById("p-sold-out").checked = p.is_sold_out || false;
+        document.getElementById("p-desc").value = p.description || "";
+        document.getElementById("p-desc-ar").value = p.description_ar || "";
+        document.getElementById("p-mileage").value = p.mileage || "";
+        document.getElementById("p-trans").value = p.transmission || "";
+        document.getElementById("p-fuel").value = p.fuel_type || "";
+        document.getElementById("p-version").value = p.version || "";
+        document.getElementById("p-color").value = p.color || "";
+        document.getElementById("p-color-ar").value = p.color_ar || "";
     }
-
-    // If new product and gallery is empty but main image exists, add main image to gallery
-    if (
-      !editingId &&
-      currentGallery.length === 0 &&
-      payload.image_url &&
-      !payload.image_url.includes("placehold.co")
-    ) {
-      currentGallery.push(payload.image_url);
-    }
-
-    payload.gallery = currentGallery;
-    payload.colors = currentColors.map(({ id, ...rest }) => rest);
-
-    // 4. Insert or Update
-    let error;
-    if (editingId) {
-      const { error: err } = await supabase
-        .from("products")
-        .update(payload)
-        .eq("id", editingId);
-      error = err;
-    } else {
-      const { error: err } = await supabase.from("products").insert(payload);
-      error = err;
-    }
-
-    if (error) throw error;
-
-    showToast("Vehicle saved successfully!", "success");
-    closeModal();
-    loadProducts();
-  } catch (err) {
-    console.error(err);
-    showToast("Failed to save: " + err.message, "error");
-  } finally {
-    btn.textContent = originalText;
-    btn.disabled = false;
-  }
+    renderBrandSelector(p ? p.brand_id : null);
+    productModal.classList.remove("hidden");
 }
+function closeModal() { productModal.classList.add("hidden"); }
 
-// --- Inquiry Logic ---
-
-async function loadInquiries() {
-  const tbody = document.getElementById("inquiries-table-body");
-  tbody.innerHTML =
-    '<tr><td colspan="7" class="px-6 py-4 text-center">Loading...</td></tr>';
-
-  const { data, error } = await supabase
-    .from("inquiries")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    console.error(error);
-    tbody.innerHTML =
-      '<tr><td colspan="7" class="px-6 py-4 text-center text-red-500">Failed to load inquiries</td></tr>';
-    return;
-  }
-
-  currentInquiries = data;
-  filterInquiries();
+function renderBrandSelector(selectedId) {
+    const container = document.getElementById("p-brand-container");
+    container.innerHTML = currentBrands.map(b => `
+        <button type="button" onclick="selectBrand(${b.id})" class="brand-btn p-2 border-2 rounded ${selectedId == b.id ? 'border-primary' : 'border-transparent'}">
+            <img src="${b.logo_url}" class="h-8 w-12 object-contain">
+        </button>
+    `).join('');
 }
-
-function filterInquiries() {
-  const filter = document.getElementById("filter-inquiries").value; // all, resolved, unresolved
-  let filtered = currentInquiries;
-
-  if (filter === "resolved") {
-    filtered = currentInquiries.filter((i) => i.resolved === true);
-  } else if (filter === "unresolved") {
-    filtered = currentInquiries.filter((i) => i.resolved !== true);
-  }
-
-  renderInquiries(filtered);
-}
-
-function renderInquiries(inquiries) {
-  const tbody = document.getElementById("inquiries-table-body");
-
-  if (inquiries.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="7" class="px-6 py-4 text-center">No inquiries found.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = inquiries
-    .map(
-      (inq) => `
-        <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors ${inq.resolved ? "opacity-60 bg-gray-50 dark:bg-white/5" : ""}">
-            <td class="px-6 py-4">
-                 <input type="checkbox" ${inq.resolved ? "checked" : ""} onchange="toggleResolved(${inq.id}, this)" class="w-5 h-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer" title="Mark as Resolved">
-            </td>
-            <td class="px-6 py-4 text-gray-500 text-xs whitespace-nowrap">
-                ${new Date(inq.created_at).toLocaleDateString()}
-            </td>
-            <td class="px-6 py-4 font-medium">${escapeHtml(inq.name)}</td>
-            <td class="px-6 py-4 text-sm">
-                <div class="flex flex-col">
-                    <a href="mailto:${escapeHtml(inq.email)}" class="text-blue-500 hover:underline">${escapeHtml(inq.email)}</a>
-                    <span class="text-gray-500">${escapeHtml(inq.phone) || "-"}</span>
-                </div>
-            </td>
-            <td class="px-6 py-4 text-sm">
-                ${inq.vehicle_name ? `<span class="bg-primary/10 text-primary px-2 py-1 rounded text-xs font-bold">${escapeHtml(inq.vehicle_name)}</span>` : '<span class="text-gray-400">-</span>'}
-            </td>
-            <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 max-w-xs truncate cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 transition-colors" onclick="showInquiryMessage(${inq.id})" title="Click to read full message">
-                ${escapeHtml(inq.message) || "-"}
-            </td>
-            <td class="px-6 py-4 text-right">
-                <button onclick="deleteInquiry(${inq.id})" class="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-50 dark:hover:bg-white/10 transition-colors" title="Delete Inquiry">
-                    <span class="material-symbols-outlined text-[20px]">delete</span>
-                </button>
-            </td>
-        </tr>
-    `,
-    )
-    .join("");
-}
-
-window.toggleResolved = async function (id, checkbox) {
-  const resolved = checkbox.checked;
-
-  // Optimistic UI update (optional, but good for UX)
-  const row = checkbox.closest("tr");
-  if (resolved) {
-    row.classList.add("opacity-60", "bg-gray-50", "dark:bg-white/5");
-  } else {
-    row.classList.remove("opacity-60", "bg-gray-50", "dark:bg-white/5");
-  }
-
-  const { error } = await supabase
-    .from("inquiries")
-    .update({ resolved })
-    .eq("id", id);
-
-  if (error) {
-    showToast("Error updating status: " + error.message, "error");
-    checkbox.checked = !resolved; // Revert
-    return;
-  }
-
-  // Update local state
-  const inq = currentInquiries.find((i) => i.id === id);
-  if (inq) inq.resolved = resolved;
-
-  // Refresh view if filtering is active (e.g. if viewing 'unresolved' and we mark as resolved, it should disappear)
-  filterInquiries();
+window.selectBrand = (id) => {
+    document.getElementById("p-brand-id").value = id;
+    document.querySelectorAll(".brand-btn").forEach(btn => btn.classList.remove("border-primary"));
+    event.currentTarget.classList.add("border-primary");
 };
 
-window.deleteInquiry = function (id) {
-  showConfirm("Are you sure you want to delete this inquiry?", async () => {
-    const { error } = await supabase.from("inquiries").delete().eq("id", id);
-
-    if (error) {
-      showToast("Error deleting: " + error.message, "error");
-    } else {
-      showToast("Inquiry deleted.", "success");
-      // Remove from local state
-      currentInquiries = currentInquiries.filter((i) => i.id !== id);
-      filterInquiries();
-    }
-  });
-};
-
-window.showInquiryMessage = function (id) {
-  const inquiry = currentInquiries.find((i) => i.id === id);
-  if (!inquiry) return;
-
-  const existing = document.getElementById("inquiry-modal");
-  if (existing) existing.remove();
-
-  const modalHtml = `
-        <div id="inquiry-modal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm opacity-0 transition-opacity duration-300">
-            <div class="bg-white dark:bg-surface-card w-full max-w-lg rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
-                <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 dark:border-white/10 flex-shrink-0">
-                    <h3 class="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="material-symbols-outlined text-primary">chat</span> Inquiry Message
-                    </h3>
-                    <button id="inquiry-modal-close" class="text-gray-500 hover:text-slate-900 dark:hover:text-white transition-colors">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
-                </div>
-                <div class="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap overflow-y-auto pr-2 custom-scrollbar flex-grow">${escapeHtml(inquiry.message)}</div>
-                <div class="mt-6 pt-4 border-t border-gray-200 dark:border-white/10 flex justify-end flex-shrink-0">
-                    <button id="inquiry-modal-ok" class="px-6 py-2 rounded-lg text-sm font-medium text-white bg-primary hover:bg-red-600 transition-colors">Close</button>
-                </div>
-            </div>
-        </div>
-    `;
-
-  document.body.insertAdjacentHTML("beforeend", modalHtml);
-  const modal = document.getElementById("inquiry-modal");
-  const inner = modal.querySelector("div");
-
-  // Trigger animation
-  setTimeout(() => {
-    modal.classList.remove("opacity-0");
-    inner.classList.remove("scale-95");
-  }, 10);
-
-  const closeModal = () => {
-    modal.classList.add("opacity-0");
-    inner.classList.add("scale-95");
-    setTimeout(() => modal.remove(), 300);
-  };
-
-  document
-    .getElementById("inquiry-modal-close")
-    .addEventListener("click", closeModal);
-  document
-    .getElementById("inquiry-modal-ok")
-    .addEventListener("click", closeModal);
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-};
-
-// --- Brand Logic ---
-
-let editingBrandId = null;
-
+// --- Brands ---
 async function loadBrands() {
-  const tbody = document.getElementById("brands-table-body");
-  if (tbody)
-    tbody.innerHTML =
-      '<tr><td colspan="3" class="px-6 py-4 text-center">Loading...</td></tr>';
-
-  const { data, error } = await supabase
-    .from("brands")
-    .select("*")
-    .order("name", { ascending: true });
-
-  if (error) {
-    console.error(error);
-    if (tbody)
-      tbody.innerHTML =
-        '<tr><td colspan="3" class="px-6 py-4 text-center text-red-500">Failed to load brands</td></tr>';
-    return;
-  }
-
-  currentBrands = data;
-  renderBrands(data);
+    try { currentBrands = await window.brandsDb.getAll(); renderBrands(currentBrands); }
+    catch (e) { showToast("Error loading brands", "error"); }
 }
-
 function renderBrands(brands) {
-  const tbody = document.getElementById("brands-table-body");
-  if (!tbody) return;
-
-  if (brands.length === 0) {
-    tbody.innerHTML =
-      '<tr><td colspan="3" class="px-6 py-4 text-center">No brands found.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = brands
-    .map(
-      (b) => `
-        <tr class="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
-            <td class="px-6 py-4">
-                <div class="h-10 w-16 bg-white dark:bg-gray-100 rounded flex items-center justify-center p-1 border border-gray-200 dark:border-gray-300">
-                    <img src="${escapeHtml(b.logo_url)}" class="max-h-full max-w-full object-contain" alt="${escapeHtml(b.name)}">
-                </div>
-            </td>
-            <td class="px-6 py-4 font-medium">${escapeHtml(b.name)}</td>
+    const tbody = document.getElementById("brands-table-body");
+    tbody.innerHTML = brands.map(b => `
+        <tr>
+            <td class="px-6 py-4"><img src="${b.logo_url}" class="h-10 w-16 object-contain"></td>
+            <td class="px-6 py-4">${escapeHtml(b.name)}</td>
             <td class="px-6 py-4 text-right">
-                <button onclick="editBrand(${b.id})" class="text-blue-500 hover:text-blue-400 font-medium text-xs mr-3">Edit</button>
-                <button onclick="deleteBrand(${b.id})" class="text-red-500 hover:text-red-400 font-medium text-xs">Delete</button>
+                <button onclick="editBrand(${b.id})" class="text-blue-500 mr-3">Edit</button>
+                <button onclick="deleteBrand(${b.id})" class="text-red-500">Delete</button>
             </td>
         </tr>
-    `,
-    )
-    .join("");
+    `).join('');
 }
-
-function openBrandModal(brand = null) {
-  brandModal.classList.remove("hidden");
-  const title = document.getElementById("brand-modal-title");
-  const form = document.getElementById("brand-form");
-  const previewContainer = document.getElementById("b-logo-preview");
-  const previewImg = document.getElementById("b-logo-img");
-
-  if (brand) {
-    editingBrandId = brand.id;
-    title.textContent = "Edit Brand";
-    document.getElementById("b-name").value = brand.name;
-
-    previewImg.src = brand.logo_url;
-    previewContainer.classList.remove("hidden");
-  } else {
-    editingBrandId = null;
-    title.textContent = "Add New Brand";
-    form.reset();
-    previewContainer.classList.add("hidden");
-    previewImg.src = "";
-  }
-
-  document.getElementById("b-logo").value = "";
-}
-
-function closeBrandModal() {
-  brandModal.classList.add("hidden");
-}
-
-window.editBrand = function (id) {
-  const brand = currentBrands.find((b) => b.id === id);
-  if (brand) openBrandModal(brand);
-};
-
-window.deleteBrand = async function (id) {
-  // Check if any products use this brand
-  const { count, error: countError } = await supabase
-    .from("products")
-    .select("*", { count: "exact", head: true })
-    .eq("brand_id", id);
-
-  if (count > 0) {
-    showToast(
-      `Cannot delete this brand because it is assigned to ${count} vehicle(s). Please reassign or delete those vehicles first.`,
-      "error",
-    );
-    return;
-  }
-
-  showConfirm("Are you sure you want to delete this brand?", async () => {
-    const { error } = await supabase.from("brands").delete().eq("id", id);
-    if (error) {
-      showToast("Error deleting: " + error.message, "error");
-    } else {
-      showToast("Brand deleted.", "success");
-      loadBrands();
-      // Also reload products to update state
-      loadProducts();
-    }
-  });
-};
-
+window.editBrand = (id) => { const b = currentBrands.find(x => x.id === id); if (b) openBrandModal(b); };
+window.deleteBrand = (id) => showConfirm("Delete brand?", async () => {
+    try { await window.brandsDb.delete(id); showToast("Deleted"); loadBrands(); }
+    catch (e) { showToast("Delete failed", "error"); }
+});
 async function handleSaveBrand(e) {
-  e.preventDefault();
-  const btn = document.getElementById("save-brand-btn");
-  const originalText = btn.textContent;
-  btn.textContent = "Saving...";
-  btn.disabled = true;
-
-  try {
-    const name = document.getElementById("b-name").value;
-    const fileInput = document.getElementById("b-logo");
-    let logoUrl = null;
-
-    // Ensure new brand has a logo
-    if (!editingBrandId && fileInput.files.length === 0) {
-      showToast("Please select a logo image for the brand.", "warning");
-      btn.textContent = originalText;
-      btn.disabled = false;
-      return;
-    }
-
-    if (fileInput.files.length > 0) {
-      const file = fileInput.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `brand-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `public/${fileName}`;
-
-      const { data, error: uploadError } = await supabase.storage
-        .from("vehicle-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicData } = supabase.storage
-        .from("vehicle-images")
-        .getPublicUrl(filePath);
-
-      logoUrl = publicData.publicUrl;
-    }
-
-    const payload = { name };
-    if (logoUrl) {
-      payload.logo_url = logoUrl;
-    }
-
-    let error;
-    if (editingBrandId) {
-      const { error: err } = await supabase
-        .from("brands")
-        .update(payload)
-        .eq("id", editingBrandId);
-      error = err;
-    } else {
-      const { error: err } = await supabase.from("brands").insert(payload);
-      error = err;
-    }
-
-    if (error) throw error;
-
-    showToast("Brand saved successfully!", "success");
-    closeBrandModal();
-    loadBrands();
-    // Reload products so the brand selector updates for future product edits
-    loadProducts();
-  } catch (err) {
-    console.error(err);
-    showToast("Failed to save brand: " + err.message, "error");
-  } finally {
-    btn.textContent = originalText;
-    btn.disabled = false;
-  }
-}
-
-// --- Settings Logic ---
-
-async function loadSettings() {
-  const egpInput = document.getElementById("setting-egp-usd");
-  const locPinInput = document.getElementById("setting-location-pin");
-  const mapEmbedInput = document.getElementById("setting-map-embed");
-  const heroImgInput = document.getElementById("setting-hero-image");
-  const heroImg2Input = document.getElementById("setting-hero-image-2");
-  const currentHeroSpan = document.getElementById("current-hero-image");
-  const currentHero2Span = document.getElementById("current-hero-image-2");
-
-  const btn = document.getElementById("save-settings-btn");
-  const inputs = [
-    egpInput,
-    locPinInput,
-    mapEmbedInput,
-    heroImgInput,
-    heroImg2Input,
-  ].filter((i) => i);
-
-  inputs.forEach((i) => (i.disabled = true));
-  if (btn) {
+    e.preventDefault();
+    const btn = document.getElementById("save-brand-btn");
     btn.disabled = true;
-    btn.textContent = "Loading...";
-  }
-
-  const { data, error } = await supabase
-    .from("app_settings")
-    .select("key, value");
-
-  if (error) {
-    console.error(error);
-    showToast("Failed to load settings", "error");
-    if (egpInput) egpInput.value = "50.0"; // Default
-  } else {
-    const settings = {};
-    data.forEach((item) => (settings[item.key] = item.value));
-
-    if (egpInput && settings["EGP_TO_USD"])
-      egpInput.value = settings["EGP_TO_USD"];
-    if (locPinInput && settings["LOCATION_PIN"])
-      locPinInput.value = settings["LOCATION_PIN"];
-    if (mapEmbedInput && settings["MAP_EMBED"])
-      mapEmbedInput.value = settings["MAP_EMBED"];
-
-    // Load Social Links
-    const socialTypes = [
-      "tiktok",
-      "facebook",
-      "instagram",
-      "whatsapp",
-      "phone",
-    ];
-    socialTypes.forEach((type) => {
-      const container = document.querySelector(
-        `#container-social-${type} .social-links-list`,
-      );
-      if (container) {
-        container.innerHTML = "";
-        const val = settings[`SOCIAL_${type.toUpperCase()}`];
-        if (val) {
-          try {
-            const parsed = JSON.parse(val);
-            if (Array.isArray(parsed)) {
-              parsed.forEach((link) => addSocialLink(type, link));
-            } else {
-              addSocialLink(type, val);
-            }
-          } catch (e) {
-            addSocialLink(type, val);
-          }
+    try {
+        const payload = { name: document.getElementById("b-name").value };
+        const file = document.getElementById("b-logo").files[0];
+        if (file) {
+            const path = `brands/${Date.now()}-${file.name}`;
+            await window.supabase.storage.from("vehicle-images").upload(path, file);
+            payload.logo_url = window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
         }
-      }
-    });
-
-    if (settings["HERO_IMAGE"]) {
-      if (currentHeroSpan)
-        currentHeroSpan.textContent = settings["HERO_IMAGE"].split("/").pop();
-    } else {
-      if (currentHeroSpan) currentHeroSpan.textContent = "Default";
-    }
-
-    if (settings["HERO_IMAGE_2"]) {
-      if (currentHero2Span)
-        currentHero2Span.textContent = settings["HERO_IMAGE_2"]
-          .split("/")
-          .pop();
-    } else {
-      if (currentHero2Span) currentHero2Span.textContent = "Not set";
-    }
-  }
-
-  inputs.forEach((i) => (i.disabled = false));
-  if (btn) {
-    btn.disabled = false;
-    btn.textContent = "Save All Settings";
-  }
+        if (editingBrandId) await window.brandsDb.update(editingBrandId, payload);
+        else await window.brandsDb.create(payload);
+        showToast("Brand saved");
+        closeBrandModal();
+        loadBrands();
+    } catch (e) { showToast("Save failed", "error"); }
+    finally { btn.disabled = false; }
 }
-
-// --- Exports for Testing ---
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = {
-    loadSettings,
-    handleSaveSettings,
-    handleSaveProduct,
-    renderProducts,
-    escapeHtml,
-  };
+let editingBrandId = null;
+function openBrandModal(b = null) {
+    editingBrandId = b ? b.id : null;
+    brandForm.reset();
+    document.getElementById("brand-modal-title").textContent = b ? "Edit Brand" : "Add Brand";
+    if (b) {
+        document.getElementById("b-name").value = b.name;
+        document.getElementById("b-logo-img").src = b.logo_url;
+        document.getElementById("b-logo-preview").classList.remove("hidden");
+    } else {
+        document.getElementById("b-logo-preview").classList.add("hidden");
+    }
+    brandModal.classList.remove("hidden");
 }
+function closeBrandModal() { brandModal.classList.add("hidden"); }
 
-async function handleSaveSettings(e) {
-  e.preventDefault();
-  const btn = document.getElementById("save-settings-btn");
-  const originalText = btn ? btn.textContent : "Save";
-  if (btn) {
-    btn.textContent = "Saving...";
-    btn.disabled = true;
-  }
+// --- Inquiries ---
+async function loadInquiries() {
+    try { currentInquiries = await window.messagesDb.getAll(); filterInquiries(); }
+    catch (e) { showToast("Error loading messages", "error"); }
+}
+function filterInquiries() {
+    const filter = document.getElementById("filter-inquiries").value;
+    const filtered = currentInquiries.filter(i => filter === 'all' || (filter === 'unread' && !i.is_read) || (filter === 'read' && i.is_read));
+    renderInquiries(filtered);
+}
+function renderInquiries(inqs) {
+    const tbody = document.getElementById("inquiries-table-body");
+    tbody.innerHTML = inqs.map(i => `
+        <tr class="${i.is_read ? 'opacity-50' : ''}">
+            <td class="px-6 py-4"><input type="checkbox" ${i.is_read ? 'checked' : ''} onchange="toggleRead(${i.id}, this)" class="rounded text-primary"></td>
+            <td class="px-6 py-4 text-xs">${new Date(i.created_at).toLocaleDateString()}</td>
+            <td class="px-6 py-4 font-medium">${escapeHtml(i.name)}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(i.email)}<br>${escapeHtml(i.phone || '')}</td>
+            <td class="px-6 py-4 text-sm">${escapeHtml(i.subject || '-')}</td>
+            <td class="px-6 py-4 text-sm truncate max-w-xs" onclick="alert(this.textContent)">${escapeHtml(i.message)}</td>
+            <td class="px-6 py-4 text-right"><button onclick="deleteInquiry(${i.id})" class="text-red-500">Delete</button></td>
+        </tr>
+    `).join('');
+}
+window.toggleRead = async (id, cb) => {
+    try { if (cb.checked) await window.messagesDb.markAsRead(id); loadInquiries(); }
+    catch (e) { cb.checked = !cb.checked; }
+};
+window.deleteInquiry = (id) => showConfirm("Delete inquiry?", async () => {
+    try { await window.messagesDb.delete(id); showToast("Deleted"); loadInquiries(); }
+    catch (e) { showToast("Delete failed", "error"); }
+});
 
-  try {
-    const updates = [
-      {
-        key: "EGP_TO_USD",
-        value: document.getElementById("setting-egp-usd").value,
-      },
-      {
-        key: "LOCATION_PIN",
-        value: document.getElementById("setting-location-pin").value,
-      },
-      {
-        key: "MAP_EMBED",
-        value: document.getElementById("setting-map-embed").value,
-      },
-    ];
+// --- Settings ---
+async function loadSettings() {
+    try {
+        const s = await window.settingsDb.getAll();
+        document.getElementById("setting-egp-usd").value = s.exchange_rate || "50";
+        document.getElementById("setting-location-pin").value = s.location_pin || "";
+        document.getElementById("setting-map-embed").value = s.map_iframe_source || "";
+        document.getElementById("current-hero-image").textContent = s.hero_image ? "Set" : "Not set";
 
-    const socialTypes = [
-      "tiktok",
-      "facebook",
-      "instagram",
-      "whatsapp",
-      "phone",
-    ];
-    socialTypes.forEach((type) => {
-      const container = document.querySelector(
-        `#container-social-${type} .social-links-list`,
-      );
-      if (container) {
-        const links = Array.from(container.querySelectorAll("input"))
-          .map((input) => input.value.trim())
-          .filter((v) => v !== "");
-        updates.push({
-          key: `SOCIAL_${type.toUpperCase()}`,
-          value: JSON.stringify(links),
+        const social = ['tiktok', 'facebook', 'instagram', 'whatsapp', 'phone'];
+        social.forEach(type => {
+            const container = document.querySelector(`#container-social-${type} .social-links-list`);
+            container.innerHTML = "";
+            const val = s[`${type}_${(type==='phone'||type==='whatsapp')?'number':'link'}`];
+            if (val) {
+                let links = []; try { links = JSON.parse(val); } catch(e) { links = [val]; }
+                if (Array.isArray(links)) links.forEach(l => addSocialLink(type, l));
+            }
         });
-      }
-    });
+    } catch (e) { showToast("Error loading settings", "error"); }
+}
+async function handleSaveSettings(e) {
+    e.preventDefault();
+    const btn = document.getElementById("save-settings-btn");
+    btn.disabled = true;
+    try {
+        const updates = [
+            { key: "exchange_rate", value: document.getElementById("setting-egp-usd").value },
+            { key: "location_pin", value: document.getElementById("setting-location-pin").value },
+            { key: "map_iframe_source", value: document.getElementById("setting-map-embed").value }
+        ];
 
-    // Handle Hero Image Upload
-    const heroInput = document.getElementById("setting-hero-image");
-    if (heroInput && heroInput.files.length > 0) {
-      const file = heroInput.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `hero-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `public/${fileName}`;
+        ['tiktok', 'facebook', 'instagram', 'whatsapp', 'phone'].forEach(type => {
+            const container = document.querySelector(`#container-social-${type} .social-links-list`);
+            const links = Array.from(container.querySelectorAll("input")).map(i => i.value.trim()).filter(v => v);
+            const key = (type === 'whatsapp' || type === 'phone') ? `${type}_number` : `${type}_link`;
+            updates.push({ key, value: JSON.stringify(links) });
+        });
 
-      const { data, error: uploadError } = await supabase.storage
-        .from("vehicle-images")
-        .upload(filePath, file);
+        const hero = document.getElementById("setting-hero-image").files[0];
+        if (hero) {
+            const path = `settings/hero-${Date.now()}`;
+            await window.supabase.storage.from("vehicle-images").upload(path, hero);
+            updates.push({ key: "hero_image", value: window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl });
+        }
 
-      if (uploadError) throw uploadError;
+        await window.settingsDb.updateMultiple(updates);
+        showToast("Settings saved");
+        loadSettings();
+    } catch (e) { showToast("Save failed", "error"); }
+    finally { btn.disabled = false; }
+}
 
-      const { data: publicData } = supabase.storage
-        .from("vehicle-images")
-        .getPublicUrl(filePath);
+window.addSocialLink = function(type, val = "") {
+    const container = document.querySelector(`#container-social-${type} .social-links-list`);
+    const div = document.createElement("div");
+    div.className = "flex gap-2 mb-2";
+    div.innerHTML = `
+        <input type="text" value="${val}" class="flex-grow rounded border border-gray-300 dark:border-white/10 p-2 bg-transparent">
+        <button type="button" onclick="this.parentElement.remove()" class="text-red-500">X</button>
+    `;
+    container.appendChild(div);
+};
 
-      updates.push({ key: "HERO_IMAGE", value: publicData.publicUrl });
-    }
-
-    // Handle Hero Image 2 Upload
-    const hero2Input = document.getElementById("setting-hero-image-2");
-    if (hero2Input && hero2Input.files.length > 0) {
-      const file = hero2Input.files[0];
-      const fileExt = file.name.split(".").pop();
-      const fileName = `hero2-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      const filePath = `public/${fileName}`;
-
-      const { data, error: uploadError } = await supabase.storage
-        .from("vehicle-images")
-        .upload(filePath, file);
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicData } = supabase.storage
-        .from("vehicle-images")
-        .getPublicUrl(filePath);
-
-      updates.push({ key: "HERO_IMAGE_2", value: publicData.publicUrl });
-    }
-
-    const { error } = await supabase.from("app_settings").upsert(updates);
-
-    if (error) throw error;
-
-    showToast("Settings saved successfully!", "success");
-    loadSettings(); // Refresh view
-  } catch (err) {
-    console.error(err);
-    showToast("Failed to save settings: " + err.message, "error");
-  } finally {
-    if (btn) {
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
-  }
+// Exports
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { loadSettings, handleSaveSettings, handleSaveProduct, renderProducts, escapeHtml };
 }
 window.toggleTheme = function() {
-    const html = document.documentElement;
-    const isDark = html.classList.contains('dark');
-
-    if (isDark) {
-        html.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-    } else {
-        html.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
-    }
-
-    // Update icons
-    document.querySelectorAll('.theme-icon').forEach(icon => {
-        icon.textContent = isDark ? 'light_mode' : 'dark_mode';
-    });
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    document.querySelectorAll('.theme-icon').forEach(icon => icon.textContent = isDark ? 'light_mode' : 'dark_mode');
 };
-
-// Initialize theme on load
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    if (savedTheme === 'light') {
-        document.documentElement.classList.remove('dark');
-        document.querySelectorAll('.theme-icon').forEach(icon => {
-            icon.textContent = 'light_mode';
-        });
-    } else {
-        document.documentElement.classList.add('dark');
-        document.querySelectorAll('.theme-icon').forEach(icon => {
-            icon.textContent = 'dark_mode';
-        });
-    }
-});

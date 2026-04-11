@@ -1,300 +1,196 @@
 <!DOCTYPE html>
-
-<html class="dark" lang="en"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Explore Luxury Electric | Legend Automotive</title>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-<script id="tailwind-config">
-                  tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            "colors": {
-                    "surface": "var(--color-surface)",
-                    "tertiary-container": "var(--color-tertiary-container)",
-                    "surface-variant": "var(--color-surface-variant)",
-                    "surface-container": "var(--color-surface-container)",
-                    "on-tertiary-fixed": "var(--color-on-tertiary-fixed)",
-                    "tertiary-fixed": "var(--color-tertiary-fixed)",
-                    "on-secondary-fixed-variant": "var(--color-on-secondary-fixed-variant)",
-                    "on-tertiary-fixed-variant": "var(--color-on-tertiary-fixed-variant)",
-                    "on-error-container": "var(--color-on-error-container)",
-                    "primary": "var(--color-primary)",
-                    "error-container": "var(--color-error-container)",
-                    "surface-container-lowest": "var(--color-surface-container-lowest)",
-                    "secondary-container": "var(--color-secondary-container)",
-                    "surface-dim": "var(--color-surface-dim)",
-                    "primary-container": "var(--color-primary-container)",
-                    "secondary": "var(--color-secondary)",
-                    "tertiary": "var(--color-tertiary)",
-                    "primary-fixed": "var(--color-primary-fixed)",
-                    "tertiary-fixed-dim": "var(--color-tertiary-fixed-dim)",
-                    "secondary-fixed": "var(--color-secondary-fixed)",
-                    "on-primary-fixed": "var(--color-on-primary-fixed)",
-                    "on-primary-container": "var(--color-on-primary-container)",
-                    "on-secondary-fixed": "var(--color-on-secondary-fixed)",
-                    "on-secondary-container": "var(--color-on-secondary-container)",
-                    "outline": "var(--color-outline)",
-                    "inverse-surface": "var(--color-inverse-surface)",
-                    "on-primary-fixed-variant": "var(--color-on-primary-fixed-variant)",
-                    "surface-container-high": "var(--color-surface-container-high)",
-                    "primary-fixed-dim": "var(--color-primary-fixed-dim)",
-                    "on-surface": "var(--color-on-surface)",
-                    "inverse-primary": "var(--color-inverse-primary)",
-                    "outline-variant": "var(--color-outline-variant)",
-                    "surface-container-highest": "var(--color-surface-container-highest)",
-                    "error": "var(--color-error)",
-                    "surface-container-low": "var(--color-surface-container-low)",
-                    "on-tertiary-container": "var(--color-on-tertiary-container)",
-                    "on-error": "var(--color-on-error)",
-                    "on-primary": "var(--color-on-primary)",
-                    "secondary-fixed-dim": "var(--color-secondary-fixed-dim)",
-                    "surface-bright": "var(--color-surface-bright)",
-                    "inverse-on-surface": "var(--color-inverse-on-surface)",
-                    "background": "var(--color-background)",
-                    "on-background": "var(--color-on-background)",
-                    "on-secondary": "var(--color-on-secondary)",
-                    "on-surface-variant": "var(--color-on-surface-variant)",
-                    "surface-tint": "var(--color-surface-tint)",
-                    "on-tertiary": "var(--color-on-tertiary)"
-            },
-
-
-
-            "borderRadius": {
-                    "DEFAULT": "0.125rem",
-                    "lg": "0.25rem",
-                    "xl": "0.5rem",
-                    "full": "0.75rem"
-            },
-            "fontFamily": {
-                    "headline": ["Manrope"],
-                    "body": ["Inter"],
-                    "label": ["Inter"]
-            }
-          },
-        },
-      }
-    </script>
-<style>
-        .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-        .glass-panel {
-            background: rgba(42, 42, 42, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-    </style>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Explore Collection | Legend Automotive</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary">
-<!-- TopNavBar Implementation -->
-<header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl">
-<div class="bg-gradient-to-b from-background to-transparent">
-<nav class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
-<a class="text-2xl font-bold tracking-tighter text-primary italic" href="#" data-i18n="header_title">Legend Automotive</a>
-<div class="hidden md:flex items-center space-x-10 font-manrope tracking-wider uppercase text-sm font-semibold">
-<a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="index.html">Home</a>
-<a class="text-primary border-b-2 border-primary-container pb-1" href="inventory.html" data-i18n="nav_inventory">Explore</a>
-<a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="about.html">About</a>
-<a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="contact.html" data-i18n="nav_contact">Contact Us</a>
-<a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="admin.html">Admin</a>
-</div>
-<div class="flex items-center space-x-6 text-primary">
-<button class="scale-95 active:scale-90 transition-transform">
-<span class="material-symbols-outlined" data-icon="search">search</span>
-</button>
-<button onclick="toggleTheme()" class="hidden md:block scale-95 active:scale-90 transition-transform text-primary" title="Toggle Theme">
-    <span class="material-symbols-outlined theme-icon">dark_mode</span>
-</button>
-<button id="mobile-menu-btn" class="scale-95 active:scale-90 transition-transform">
-<span class="material-symbols-outlined" data-icon="menu">menu</span>
-</button>
-</div>
-</nav>
-</div>
-</header>
-<main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
-<!-- Hero Title Section -->
-<div class="mb-16">
-<h1 class="font-headline text-6xl font-extrabold tracking-tighter text-on-surface mb-4">
+    <!-- TopNavBar -->
+    <header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl">
+        <div class="bg-gradient-to-b from-background to-transparent">
+            <nav class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+                <a class="text-2xl font-bold tracking-tighter text-primary italic font-headline" href="index.html" data-i18n="header_title">Legend Automotive</a>
+                <div class="hidden md:flex items-center space-x-10 rtl:space-x-reverse font-manrope tracking-wider uppercase text-sm font-semibold">
+                    <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="index.html" data-i18n="nav_home">Home</a>
+                    <a class="text-primary border-b-2 border-primary-container pb-1" href="inventory.html" data-i18n="nav_inventory">Explore</a>
+                    <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="about.html" data-i18n="nav_about">About</a>
+                    <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="contact.html" data-i18n="nav_contact">Contact Us</a>
+                    <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="admin.html" data-i18n="nav_admin">Admin</a>
+                </div>
+                <div class="flex items-center space-x-4 rtl:space-x-reverse text-primary">
+                    <button onclick="toggleCurrency()" class="currency-toggle scale-95 active:scale-90 transition-transform text-primary text-xs font-bold px-2 py-1 border border-primary/20 rounded">
+                        <span class="currency-text">L.E</span>
+                    </button>
+                    <button onclick="toggleLanguage()" class="lang-toggle scale-95 active:scale-90 transition-transform text-primary text-xs font-bold px-2 py-1 border border-primary/20 rounded">
+                        <span class="font-bold text-sm">Ar</span>
+                    </button>
+                    <button onclick="toggleTheme()" class="hidden md:block scale-95 active:scale-90 transition-transform text-primary" title="Toggle Theme">
+                        <span class="material-symbols-outlined theme-icon">dark_mode</span>
+                    </button>
+                    <button id="mobile-menu-btn" class="scale-95 active:scale-90 transition-transform">
+                        <span class="material-symbols-outlined">menu</span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-20 px-8 max-w-7xl mx-auto">
+        <!-- Hero Title Section -->
+        <div class="mb-16 rtl:text-right">
+            <h1 class="font-headline text-6xl font-extrabold tracking-tighter text-on-surface mb-4">
                 THE <span class="text-primary italic">SOVEREIGN</span> COLLECTION
             </h1>
-<p class="text-on-surface-variant max-w-2xl font-body text-lg leading-relaxed">
+            <p class="text-on-surface-variant max-w-2xl font-body text-lg leading-relaxed">
                 Discover the pinnacle of sustainable performance. Every vehicle in our gallery is hand-selected for its legendary status and uncompromising luxury.
             </p>
-</div>
-<div class="flex flex-col lg:flex-row gap-12">
-<!-- Sidebar Filters -->
-<aside class="w-full lg:w-72 flex-shrink-0 space-y-12">
-<!-- Search Filter -->
-<div class="space-y-4">
-<label class="font-headline font-bold text-xs uppercase tracking-widest text-primary">Search</label>
-<div class="relative">
-<input class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary rounded-md py-3 px-4 text-on-surface placeholder:text-neutral-600 transition-all" id="search-input" placeholder="Model or Brand..." type="text"/>
-</div>
-</div>
-<!-- Brand Filter -->
-<div class="space-y-4">
-<label class="font-headline font-bold text-xs uppercase tracking-widest text-primary">Manufacturer</label>
-<div id="brand-filters-container" class="flex flex-wrap gap-2">
-</div>
-</div>
-<!-- Price Range -->
-<div class="space-y-6">
-<div class="flex justify-between items-center">
-<label class="font-headline font-bold text-xs uppercase tracking-widest text-primary">Price Range</label>
-<span id="price-range-display" class="text-xs text-on-surface-variant font-mono"><span id="price-min">$120k</span> - <span id="price-max">$2.5M</span></span>
-</div>
-<div class="relative h-1 bg-surface-container-high rounded-full">
-<input id="price-slider" type="range" class="absolute w-full h-full opacity-0 cursor-pointer z-20" min="0" max="100" value="100" oninput="updatePriceSliderFill(this)">
-<div id="price-slider-fill" class="absolute h-full left-0 bg-primary rounded-full pointer-events-none z-10" style="width: 100%;"></div>
-<div id="price-slider-thumb" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-on-surface border-2 border-primary rounded-full shadow-lg pointer-events-none z-10" style="left: 100%; transform: translate(-50%, -50%);"></div>
-</div>
-</div>
-<!-- Colors --><div class="space-y-4 mb-6"><label class="font-headline font-bold text-xs uppercase tracking-widest text-primary">Color</label><div id="color-filters-container" class="flex flex-wrap gap-2"></div></div>
-<!-- Vehicle Type -->
-<div class="space-y-4">
-<label class="font-headline font-bold text-xs uppercase tracking-widest text-primary">Vehicle Class</label>
-<select id="filter-category" class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary rounded-md py-3 px-4 text-on-surface"><option value="">All Categories</option></select>
-</div>
-<button class="w-full py-4 bg-surface-container-highest text-primary font-headline font-bold text-xs uppercase tracking-widest hover:bg-primary hover:text-on-primary transition-all duration-300">
-                    Clear All Filters
-                </button>
-</aside>
-<!-- Vehicle Grid -->
-<div class="flex-grow">
-<div id="inventory-container" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12">
-</div>
-<!-- Load More / Pagination -->
-<div class="mt-20 flex justify-center">
-<button class="px-12 py-5 border border-primary/10 bg-surface-container-low text-on-surface-variant font-headline font-bold text-xs uppercase tracking-[0.3em] hover:text-primary hover:border-primary/40 transition-all">
-                        Discover More Vehicles
-                    </button>
-</div>
-</div>
-</div>
+        </div>
 
-<!-- Custom Car Request Section -->
-<section class="mt-32 mb-12 bg-surface-container-low rounded-3xl p-8 md:p-16 border border-outline-variant/10 relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
-    <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2"></div>
+        <div class="flex flex-col lg:flex-row gap-12">
+            <!-- Sidebar Filters -->
+            <aside class="w-full lg:w-72 flex-shrink-0 space-y-12">
+                <!-- Search Filter -->
+                <div class="space-y-4 rtl:text-right">
+                    <label class="font-headline font-bold text-xs uppercase tracking-widest text-primary" data-i18n="search_cars">Search</label>
+                    <input class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary rounded-md py-3 px-4 text-on-surface placeholder:text-neutral-600 transition-all" id="search-input" placeholder="Model or Brand..." type="text" data-i18n-placeholder="search_cars"/>
+                </div>
+                <!-- Brand Filter -->
+                <div class="space-y-4 rtl:text-right">
+                    <label class="font-headline font-bold text-xs uppercase tracking-widest text-primary" data-i18n="filter_brand">Manufacturer</label>
+                    <div id="brand-filters-container" class="flex flex-wrap gap-2"></div>
+                </div>
+                <!-- Price Range -->
+                <div class="space-y-6 rtl:text-right">
+                    <div class="flex justify-between items-center rtl:flex-row-reverse">
+                        <label class="font-headline font-bold text-xs uppercase tracking-widest text-primary" data-i18n="price_range">Price Range</label>
+                        <span id="price-range-display" class="text-xs text-on-surface-variant font-mono"><span id="price-min">0</span> - <span id="price-max">10M</span></span>
+                    </div>
+                    <div class="relative h-1 bg-surface-container-high rounded-full">
+                        <input id="price-slider" type="range" class="absolute w-full h-full opacity-0 cursor-pointer z-20" min="0" max="100" value="100" oninput="updatePriceSliderFill(this)">
+                        <div id="price-slider-fill" class="absolute h-full left-0 bg-primary rounded-full pointer-events-none z-10" style="width: 100%;"></div>
+                        <div id="price-slider-thumb" class="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-on-surface border-2 border-primary rounded-full shadow-lg pointer-events-none z-10" style="left: 100%; transform: translate(-50%, -50%);"></div>
+                    </div>
+                </div>
+                <!-- Colors -->
+                <div class="space-y-4 mb-6 rtl:text-right">
+                    <label class="font-headline font-bold text-xs uppercase tracking-widest text-primary">Color</label>
+                    <div id="color-filters-container" class="flex flex-wrap gap-2"></div>
+                </div>
+                <!-- Category Filter -->
+                <div class="space-y-4 rtl:text-right">
+                    <label class="font-headline font-bold text-xs uppercase tracking-widest text-primary" data-i18n="filter_category">Category</label>
+                    <select id="filter-category" class="w-full bg-surface-container-lowest border-none focus:ring-1 focus:ring-primary rounded-md py-3 px-4 text-on-surface">
+                        <option value="" data-i18n="filter_category">All Categories</option>
+                    </select>
+                </div>
+            </aside>
 
-    <div class="max-w-2xl mx-auto text-center relative z-10">
-        <h2 class="font-headline text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Can't Find the Car You Need?</h2>
-        <p class="text-on-surface-variant font-body text-lg leading-relaxed mb-10">
-            Send a request and our dedicated team will locate and import the perfect vehicle tailored to your exact specifications.
-        </p>
+            <!-- Vehicle Grid -->
+            <div class="flex-grow">
+                <div id="inventory-container" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-12"></div>
+            </div>
+        </div>
+    </main>
 
-        <form id="custom-car-request-form" class="space-y-6 text-left">
-            <div class="space-y-2">
-                <input type="text" id="request-name" required placeholder="Your Name" class="w-full bg-surface-container-highest border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl py-4 px-6 text-on-surface placeholder:text-neutral-500 transition-all font-body">
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="request-contact" required placeholder="Phone or Email" class="w-full bg-surface-container-highest border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl py-4 px-6 text-on-surface placeholder:text-neutral-500 transition-all font-body">
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="request-brand" placeholder="Brand (e.g., Mercedes)" class="w-full bg-surface-container-highest border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl py-4 px-6 text-on-surface placeholder:text-neutral-500 transition-all font-body">
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="request-model" placeholder="Model/Trim (e.g., S-Class Long Range)" class="w-full bg-surface-container-highest border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl py-4 px-6 text-on-surface placeholder:text-neutral-500 transition-all font-body">
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="request-budget" placeholder="Budget (EGP)" class="w-full bg-surface-container-highest border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl py-4 px-6 text-on-surface placeholder:text-neutral-500 transition-all font-body">
-            </div>
-            <div class="space-y-2">
-                <input type="text" id="request-options" placeholder="Preferred Color / Options" class="w-full bg-surface-container-highest border border-outline-variant/20 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl py-4 px-6 text-on-surface placeholder:text-neutral-500 transition-all font-body">
-            </div>
-
-            <button type="submit" class="w-full bg-primary text-on-primary font-headline font-bold text-lg py-5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-8 shadow-lg shadow-primary/20">
-                <span class="material-symbols-outlined">event_note</span>
-                Submit Request
-            </button>
-            <p id="request-success-msg" class="hidden text-center text-[#25D366] font-body text-sm mt-4">Your request has been successfully submitted! We will contact you soon.</p>
-        </form>
-    </div>
-</section>
-
-</main>
-<!-- Footer Implementation -->
-<footer class="w-full border-t border-outline-variant/15 bg-surface-container-lowest">
-<div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-12 py-16 max-w-7xl mx-auto">
-<div class="space-y-6">
-<div class="text-lg font-bold text-primary-container" data-i18n="header_title">Legend Automotive</div>
-<p class="font-inter text-xs text-neutral-500 leading-relaxed max-w-xs">
-                    Defining the future of automotive luxury through electric innovation and timeless design. Join the legacy of sustainable excellence.
+    <!-- Footer -->
+    <footer class="w-full border-t border-outline-variant/15 bg-surface-container-lowest">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-12 py-16 max-w-7xl mx-auto">
+            <div class="rtl:text-right">
+                <div class="text-lg font-bold text-primary-container font-headline italic mb-6" data-i18n="header_title">Legend Automotive</div>
+                <p class="font-inter text-xs text-neutral-500 max-w-xs leading-loose">
+                    Defining the future of automotive luxury through electric innovation and timeless design.
                 </p>
-</div>
-<div class="space-y-6">
-<h4 class="font-headline text-xs font-bold uppercase tracking-widest text-primary">Quick Links</h4>
-<ul class="space-y-4">
-<li><a class="font-inter text-xs text-neutral-500 hover:text-primary-container hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Browse Brands</a></li>
-<li><a class="font-inter text-xs text-neutral-500 hover:text-primary-container hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Compare Vehicles</a></li>
-<li><a class="font-inter text-xs text-neutral-500 hover:text-primary-container hover:translate-x-1 transition-transform duration-200 inline-block" href="#">About Us</a></li>
-<li><a class="font-inter text-xs text-neutral-500 hover:text-primary-container hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Contact Details</a></li>
-</ul>
-</div>
-<div class="space-y-6">
-<h4 class="font-headline text-xs font-bold uppercase tracking-widest text-primary">Newsletter</h4>
-<p class="font-inter text-xs text-neutral-500">Subscribe to receive exclusive offers and first-looks at new arrivals.</p>
-<div class="flex border-b border-[#4d4635]/30 pb-2">
-<input class="bg-transparent border-none text-xs text-on-surface focus:ring-0 placeholder:text-neutral-700 w-full" placeholder="Your Email" type="email"/>
-<button class="text-primary opacity-80 hover:opacity-100 transition-opacity">
-<span class="material-symbols-outlined">north_east</span>
-</button>
-</div>
-</div>
-</div>
-<div class="max-w-7xl mx-auto px-12 py-8 border-t border-[#4d4635]/10 flex flex-col md:flex-row justify-between items-center gap-4">
-<span class="font-inter text-xs text-neutral-500">© 2024 Legend Automotive. All Rights Reserved.</span>
-<div class="flex space-x-8">
-<a class="font-inter text-xs text-neutral-500 hover:text-primary-container" href="#">Privacy Policy</a>
-<a class="font-inter text-xs text-neutral-500 hover:text-primary-container" href="#">Terms of Service</a>
-</div>
-</div>
-</footer>
-
-<div id="mobile-menu" class="hidden absolute top-20 left-0 w-full bg-background p-4 flex flex-col space-y-4 shadow-lg border-b border-surface-variant z-50">
-    <a href="index.html" class="text-on-background hover:text-primary">Home</a>
-    <a href="inventory.html" class="text-on-background hover:text-primary">Explore</a>
-    <a href="about.html" class="text-on-background hover:text-primary">About</a>
-    <a href="contact.html" class="text-on-background hover:text-primary">Contact</a>
-    <button onclick="toggleTheme()" class="text-left text-on-background hover:text-primary flex items-center gap-2"><span class="material-symbols-outlined theme-icon text-sm">dark_mode</span> Theme</button>
-    <button onclick="toggleCurrency()" class="currency-toggle text-left text-on-background hover:text-primary">Currency: <span class="currency-text">L.E</span></button>
-    <button onclick="toggleLanguage()" class="lang-toggle text-left text-on-background hover:text-primary">Language: En</button>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
-<script src="script.js"></script>
-
-<!-- Floating Contact Button -->
-<div class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
-    <!-- Popup Menu -->
-    <div id="contact-popup" class="hidden flex-col gap-3 bg-surface-container-highest/90 backdrop-blur-md p-4 rounded-2xl border border-outline-variant/20 shadow-2xl origin-bottom-right transition-all duration-300 transform scale-95 opacity-0">
-        <a href="https://wa.me/#" target="_blank" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
-            <div class="w-10 h-10 rounded-full bg-[#25D366]/20 flex items-center justify-center text-[#25D366] group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined">chat</span>
             </div>
-            <span class="font-headline font-semibold text-sm">WhatsApp Us</span>
-        </a>
-        <a href="tel:#" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
-            <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined">call</span>
+            <div class="rtl:text-right">
+                <h4 class="font-headline text-xs font-bold uppercase tracking-widest text-primary mb-6" data-i18n="nav_inventory">Quick Links</h4>
+                <ul class="space-y-4">
+                    <li><a class="font-inter text-xs text-neutral-500 hover:text-primary transition-colors" href="inventory.html" data-i18n="nav_inventory">Explore</a></li>
+                    <li><a class="font-inter text-xs text-neutral-500 hover:text-primary transition-colors" href="about.html" data-i18n="nav_about">About Us</a></li>
+                </ul>
             </div>
-            <span class="font-headline font-semibold text-sm">Call Us</span>
-        </a>
+            <div class="flex flex-col justify-end items-center md:items-start rtl:items-end">
+                <div id="footer-social-links" class="flex gap-4 opacity-80 hover:opacity-100 transition-opacity mb-8">
+                    <a id="footer-social-instagram" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">public</span></a>
+                    <a id="footer-social-facebook" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">shield</span></a>
+                    <a id="footer-social-tiktok" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">verified_user</span></a>
+                </div>
+                <div class="font-inter text-xs text-neutral-500" data-i18n="all_rights_reserved">
+                    © 2024 Legend Automotive. All Rights Reserved.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating Mobile Menu Structure -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <div id="mobile-menu-drawer" class="fixed top-0 right-0 h-full w-[80%] max-w-sm bg-background z-[101] translate-x-full transition-transform duration-400 shadow-2xl flex flex-col">
+        <div class="flex justify-between items-center p-6 border-b border-outline-variant/10">
+            <div class="text-xl font-bold tracking-tighter text-primary italic font-headline" data-i18n="header_title">Legend Automotive</div>
+            <button id="mobile-menu-close" class="p-2 text-primary active:scale-90 transition-transform">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <div class="flex-grow overflow-y-auto p-6 space-y-8">
+            <nav class="flex flex-col space-y-6">
+                <a href="index.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_home">Home</a>
+                <a href="inventory.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_inventory">Explore</a>
+                <a href="about.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_about">About</a>
+                <a href="contact.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_contact">Contact</a>
+            </nav>
+            <div class="pt-8 border-t border-outline-variant/10 space-y-6">
+                <button onclick="toggleTheme()" class="w-full flex items-center justify-between text-on-surface group">
+                    <span class="text-lg font-medium">Theme</span>
+                    <span class="material-symbols-outlined theme-icon text-primary group-active:scale-90 transition-transform">dark_mode</span>
+                </button>
+                <button onclick="toggleCurrency()" class="w-full flex items-center justify-between text-on-surface group">
+                    <span class="text-lg font-medium">Currency</span>
+                    <span class="currency-text font-bold text-primary">L.E</span>
+                </button>
+                <button onclick="toggleLanguage()" class="w-full flex items-center justify-between text-on-surface group">
+                    <span class="text-lg font-medium">Language</span>
+                    <span class="font-bold text-primary">Ar</span>
+                </button>
+            </div>
+        </div>
+        <div class="p-6 border-t border-outline-variant/10 flex justify-center gap-6">
+            <a id="drawer-social-instagram" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">public</span></a>
+            <a id="drawer-social-facebook" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">shield</span></a>
+            <a id="drawer-social-tiktok" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">verified_user</span></a>
+        </div>
     </div>
 
-    <!-- Main Floating Button -->
-    <button onclick="toggleContactPopup()" class="w-14 h-14 rounded-full bg-primary text-on-primary shadow-[0_0_20px_rgba(var(--color-primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--color-primary),0.5)] hover:scale-105 active:scale-95 transition-all flex items-center justify-center border-2 border-primary-container z-50 group">
-        <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">headset_mic</span>
-    </button>
-</div>
+    <!-- Floating Contact Button -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
+        <div id="contact-popup" class="hidden flex-col gap-3 bg-surface-container-highest/90 backdrop-blur-md p-4 rounded-2xl border border-outline-variant/20 shadow-2xl origin-bottom-right transition-all duration-300 transform scale-95 opacity-0">
+            <a id="social-whatsapp" href="#" target="_blank" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
+                <div class="w-10 h-10 rounded-full bg-[#25D366]/20 flex items-center justify-center text-[#25D366] group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">chat</span>
+                </div>
+                <span class="font-headline font-semibold text-sm" data-i18n="whatsapp_us">WhatsApp Us</span>
+            </a>
+            <a id="social-phone" href="#" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
+                <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <span class="material-symbols-outlined">call</span>
+                </div>
+                <span class="font-headline font-semibold text-sm" data-i18n="call_us">Call Us</span>
+            </a>
+        </div>
+        <button onclick="toggleContactPopup()" class="w-14 h-14 rounded-full bg-primary text-on-primary shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center border-2 border-primary-container z-50 group">
+            <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform">headset_mic</span>
+        </button>
+    </div>
 
-</body></html>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="db/products.js"></script>
+    <script src="db/brands.js"></script>
+    <script src="db/messages.js"></script>
+    <script src="db/settings.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
