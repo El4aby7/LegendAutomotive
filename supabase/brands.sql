@@ -9,9 +9,11 @@ CREATE TABLE IF NOT EXISTS public.brands (
 -- Set up Row Level Security
 ALTER TABLE public.brands ENABLE ROW LEVEL SECURITY;
 
--- Create policies
+-- Create policies (Idempotent)
+DROP POLICY IF EXISTS "Allow public read-only access" ON public.brands;
 CREATE POLICY "Allow public read-only access" ON public.brands
     FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow admin full access" ON public.brands;
 CREATE POLICY "Allow admin full access" ON public.brands
     FOR ALL USING (auth.role() = 'authenticated');

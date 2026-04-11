@@ -58,6 +58,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function init() {
+    // Move language initialization to the very top to prevent flicker/delay
+    await setLanguage(currentLang, false);
+
     setTheme(currentTheme);
     updateCurrencyButtonText();
     setupMobileMenu();
@@ -66,8 +69,6 @@ async function init() {
     await fetchExchangeRate();
     await loadBrands();
     await loadProducts();
-
-    await setLanguage(currentLang, false);
 
     const path = window.location.pathname;
     if (path.endsWith('index.html') || path.endsWith('/')) {
@@ -96,14 +97,25 @@ function setupMobileMenu() {
         overlay.classList.remove('pointer-events-none');
         overlay.classList.add('opacity-100');
         drawer.classList.remove('translate-x-full');
-        if (currentLang === 'ar') drawer.classList.remove('-translate-x-full');
+        if (currentLang === 'ar') {
+            drawer.classList.remove('-translate-x-full');
+            drawer.classList.add('translate-x-0');
+        } else {
+            drawer.classList.add('translate-x-0');
+        }
         document.body.classList.add('mobile-menu-open');
     };
 
     const closeMenu = () => {
         overlay.classList.add('opacity-0', 'pointer-events-none');
+        overlay.classList.remove('opacity-100');
         drawer.classList.add('translate-x-full');
-        if (currentLang === 'ar') drawer.classList.add('-translate-x-full');
+        if (currentLang === 'ar') {
+            drawer.classList.add('-translate-x-full');
+            drawer.classList.remove('translate-x-0');
+        } else {
+            drawer.classList.remove('translate-x-0');
+        }
         document.body.classList.remove('mobile-menu-open');
     };
 
@@ -156,7 +168,7 @@ async function setLanguage(lang, shouldRender = true) {
     if (lang === 'ar') document.body.classList.add('rtl');
     else document.body.classList.remove('rtl');
 
-    if (!translations[lang]) {
+    if (Object.keys(translations).length === 0) {
         try {
             const response = await fetch('data/translations.json');
             translations = await response.json();
@@ -181,7 +193,21 @@ function updateDOMTranslations() {
     if (!translations[currentLang]) return;
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[currentLang][key]) el.textContent = translations[currentLang][key];
+        const translation = translations[currentLang][key];
+        if (translation) {
+            // Preserve icons if they exist
+            const icon = el.querySelector('.material-symbols-outlined');
+            if (icon) {
+                // If there's an icon, we only want to update the text nodes
+                Array.from(el.childNodes).forEach(node => {
+                    if (node.nodeType === 3 && node.textContent.trim().length > 1) {
+                        node.textContent = translation + ' ';
+                    }
+                });
+            } else {
+                el.textContent = translation;
+            }
+        }
     });
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
         const key = el.getAttribute('data-i18n-placeholder');
@@ -519,4 +545,25 @@ function renderFavorites() {
     }
     updatePrices();
     updateDOMTranslations();
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        init,
+        setLanguage,
+        toggleLanguage: window.toggleLanguage,
+        setCurrency,
+        toggleCurrency: window.toggleCurrency,
+        formatPrice,
+        fetchExchangeRate,
+        createProductCard,
+        renderHome,
+        initInventory,
+        filterInventory,
+        renderDetails,
+        initContact,
+        toggleFavorite: window.toggleFavorite,
+        renderFavorites,
+        escapeHtml
+    };
 }
