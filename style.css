@@ -235,3 +235,47 @@ input:focus, textarea:focus, select:focus {
     box-shadow: 0 1px 0 0 #f2ca50 !important;
     outline: none !important;
 }
+
+/* RTL Support */
+[dir="rtl"] {
+    font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+}
+
+[dir="rtl"] .font-headline {
+    font-family: 'Manrope', 'Noto Sans Arabic', sans-serif;
+}
+
+/* Floating Mobile Menu */
+#mobile-menu-drawer {
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#mobile-menu-overlay {
+    transition: opacity 0.4s ease;
+}
+
+.mobile-menu-open {
+    overflow: hidden;
+}
+
+/* Grayscale for sold out cars */
+.grayscale {
+    filter: grayscale(100%);
+}
+
+.sold-out-stamp {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    background: rgba(238, 33, 34, 0.9);
+    color: white;
+    font-weight: 900;
+    padding: 0.5rem 1.5rem;
+    border: 4px solid white;
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 10;
+    text-transform: uppercase;
+    white-space: nowrap;
+}

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>Contact Us | Legend Automotive</title>
+    <title>Your Favorites | Legend Automotive</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -11,15 +11,15 @@
 </head>
 <body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary">
     <!-- TopNavBar -->
-    <nav class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl">
+    <header class="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl">
         <div class="bg-gradient-to-b from-background to-transparent">
-            <div class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
-                <div class="text-2xl font-bold tracking-tighter text-primary italic font-headline" data-i18n="header_title">Legend Automotive</div>
+            <nav class="flex justify-between items-center max-w-7xl mx-auto px-8 h-20">
+                <a class="text-2xl font-bold tracking-tighter text-primary italic font-headline" href="index.html" data-i18n="header_title">Legend Automotive</a>
                 <div class="hidden md:flex items-center space-x-10 rtl:space-x-reverse font-manrope tracking-wider uppercase text-sm font-semibold">
                     <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="index.html" data-i18n="nav_home">Home</a>
                     <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="inventory.html" data-i18n="nav_inventory">Explore</a>
                     <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="about.html" data-i18n="nav_about">About</a>
-                    <a class="text-primary border-b-2 border-primary-container pb-1" href="contact.html" data-i18n="nav_contact">Contact Us</a>
+                    <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="contact.html" data-i18n="nav_contact">Contact Us</a>
                     <a class="text-neutral-400 hover:text-primary transition-colors duration-300" href="admin.html" data-i18n="nav_admin">Admin</a>
                 </div>
                 <div class="flex items-center space-x-4 rtl:space-x-reverse text-primary">
@@ -36,98 +36,52 @@
                         <span class="material-symbols-outlined">menu</span>
                     </button>
                 </div>
-            </div>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <main class="pt-32 pb-24">
-        <!-- Hero Section -->
-        <section class="max-w-7xl mx-auto px-8 mb-24 rtl:text-right">
-            <span class="font-manrope text-primary tracking-[0.3em] uppercase text-xs font-bold mb-4 block" data-i18n="nav_contact">Connect with Excellence</span>
-            <h1 class="font-manrope text-6xl md:text-8xl font-extrabold tracking-tighter leading-none text-on-surface mb-8">
-                The <span class="text-primary italic">Legend</span> Awaits.
+    <main class="pt-32 pb-20 px-8 max-w-7xl mx-auto min-h-[70vh]">
+        <!-- Hero Title Section -->
+        <div class="mb-16 rtl:text-right">
+            <h1 class="font-headline text-6xl font-extrabold tracking-tighter text-on-surface mb-4">
+                YOUR <span class="text-primary italic">FAVORITE</span> LEGENDS
             </h1>
-        </section>
+            <p class="text-on-surface-variant max-w-2xl font-body text-lg leading-relaxed">
+                A curated selection of the masterpieces you've kept your eyes on.
+            </p>
+        </div>
 
-        <!-- Main Content Grid -->
-        <section class="max-w-7xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12">
-            <!-- Contact Form Area -->
-            <div class="lg:col-span-7 bg-surface-container-low p-10 rounded-xl relative overflow-hidden">
-                <h2 class="font-manrope text-3xl font-bold text-on-surface mb-10 tracking-tight" data-i18n="inquiry_portal">Inquiry Portal</h2>
-                <form id="contact-form" class="space-y-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="relative rtl:text-right">
-                            <label class="block text-on-surface-variant text-xs uppercase tracking-widest font-semibold mb-2 ml-1" data-i18n="full_name">Full Name</label>
-                            <input class="w-full bg-surface-container-lowest border-none p-4 text-on-surface placeholder-neutral-700 focus:ring-0 transition-all duration-300" id="c-name" placeholder="John Doe" required type="text"/>
-                        </div>
-                        <div class="relative rtl:text-right">
-                            <label class="block text-on-surface-variant text-xs uppercase tracking-widest font-semibold mb-2 ml-1" data-i18n="email_address">Email Address</label>
-                            <input class="w-full bg-surface-container-lowest border-none p-4 text-on-surface placeholder-neutral-700 focus:ring-0 transition-all duration-300" id="c-email" placeholder="john@example.com" required type="email"/>
-                        </div>
-                    </div>
-                    <div class="relative rtl:text-right">
-                        <label class="block text-on-surface-variant text-xs uppercase tracking-widest font-semibold mb-2 ml-1" data-i18n="subject">Subject</label>
-                        <input class="w-full bg-surface-container-lowest border-none p-4 text-on-surface placeholder-neutral-700 focus:ring-0 transition-all duration-300" id="c-interest" placeholder="General Inquiry" required type="text"/>
-                    </div>
-                    <div class="relative rtl:text-right">
-                        <label class="block text-on-surface-variant text-xs uppercase tracking-widest font-semibold mb-2 ml-1" data-i18n="your_message">Your Message</label>
-                        <textarea class="w-full bg-surface-container-lowest border-none p-4 text-on-surface placeholder-neutral-700 focus:ring-0 transition-all duration-300" id="c-message" placeholder="Tell us about your requirements..." required rows="5"></textarea>
-                    </div>
-                    <button class="w-full py-4 bg-gradient-to-r from-primary to-primary-container text-on-primary font-manrope font-extrabold uppercase tracking-widest text-sm rounded-md hover:opacity-90 transition-all duration-300 transform active:scale-[0.98]" type="submit" data-i18n="dispatch_inquiry">
-                        Dispatch Inquiry
-                    </button>
-                </form>
-            </div>
-
-            <!-- Sidebar Info -->
-            <div class="lg:col-span-5 flex flex-col gap-8">
-                <div class="grid grid-cols-1 gap-6">
-                    <a id="contact-phone-link" href="tel:#" class="bg-surface-container-high p-8 rounded-xl flex items-center gap-6 group hover:translate-x-1 transition-transform duration-300">
-                        <div class="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center text-primary">
-                            <span class="material-symbols-outlined text-3xl">call</span>
-                        </div>
-                        <div class="rtl:text-right">
-                            <p class="text-on-surface-variant text-xs uppercase tracking-widest mb-1" data-i18n="direct_line">Direct Line</p>
-                            <p id="contact-phone-display" class="text-xl font-bold font-manrope">+20 106 442 4446</p>
-                        </div>
-                    </a>
-                </div>
-                <!-- Interactive Map -->
-                <div id="map-container" class="flex-grow min-h-[300px] rounded-xl overflow-hidden relative group">
-                    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center animate-pulse">
-                            <div class="w-4 h-4 bg-on-primary rounded-full"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- Favorites Grid -->
+        <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
+            <!-- Loading state or empty message injected by JS -->
+        </div>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-surface-container-lowest w-full border-t border-outline-variant/15">
+    <footer class="w-full border-t border-outline-variant/15 bg-surface-container-lowest">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-12 px-12 py-16 max-w-7xl mx-auto">
-            <div class="space-y-6 rtl:text-right">
-                <div class="text-lg font-bold text-primary-container font-headline italic" data-i18n="header_title">Legend Automotive</div>
-                <p class="font-inter text-xs text-neutral-500 leading-relaxed max-w-xs">
-                    Curating the world's most exceptional automotive legends.
+            <div class="rtl:text-right">
+                <div class="text-lg font-bold text-primary-container font-headline italic mb-6" data-i18n="header_title">Legend Automotive</div>
+                <p class="font-inter text-xs text-neutral-500 max-w-xs leading-loose">
+                    Defining the future of automotive luxury through electric innovation and timeless design.
                 </p>
             </div>
-            <div class="space-y-4 rtl:text-right">
-                <p class="font-manrope text-xs font-bold text-primary uppercase tracking-widest" data-i18n="nav_inventory">Navigation</p>
-                <div class="flex flex-col gap-3">
-                    <a class="font-inter text-xs text-neutral-500 hover:text-primary transition-colors" href="inventory.html" data-i18n="nav_inventory">Explore</a>
-                    <a class="font-inter text-xs text-neutral-500 hover:text-primary transition-colors" href="about.html" data-i18n="nav_about">About Us</a>
-                </div>
+            <div class="rtl:text-right">
+                <h4 class="font-headline text-xs font-bold uppercase tracking-widest text-primary mb-6" data-i18n="nav_inventory">Quick Links</h4>
+                <ul class="space-y-4">
+                    <li><a class="font-inter text-xs text-neutral-500 hover:text-primary transition-colors" href="inventory.html" data-i18n="nav_inventory">Explore</a></li>
+                    <li><a class="font-inter text-xs text-neutral-500 hover:text-primary transition-colors" href="about.html" data-i18n="nav_about">About Us</a></li>
+                </ul>
             </div>
-            <div class="space-y-6 text-center md:text-left rtl:text-right">
-                <p class="font-manrope text-xs font-bold text-primary uppercase tracking-widest" data-i18n="stay_updated">Stay Connected</p>
-                <div id="footer-social-links" class="flex gap-4 justify-center md:justify-start rtl:justify-end">
+            <div class="flex flex-col justify-end items-center md:items-start rtl:items-end">
+                <div id="footer-social-links" class="flex gap-4 opacity-80 hover:opacity-100 transition-opacity mb-8">
                     <a id="footer-social-instagram" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">public</span></a>
                     <a id="footer-social-facebook" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">shield</span></a>
                     <a id="footer-social-tiktok" href="#" class="text-neutral-500 hover:text-primary transition-colors"><span class="material-symbols-outlined">verified_user</span></a>
                 </div>
-                <p class="font-inter text-xs text-neutral-500" data-i18n="all_rights_reserved">© 2024 Legend Automotive. All Rights Reserved.</p>
+                <div class="font-inter text-xs text-neutral-500" data-i18n="all_rights_reserved">
+                    © 2024 Legend Automotive. All Rights Reserved.
+                </div>
             </div>
         </div>
     </footer>
