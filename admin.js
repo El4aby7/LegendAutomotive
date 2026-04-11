@@ -462,7 +462,6 @@ async function handleSaveBrand(e) {
     } catch (e) { showToast("Save failed", "error"); }
     finally { btn.disabled = false; }
 }
-let editingBrandId = null;
 function openBrandModal(b = null) {
     editingBrandId = b ? b.id : null;
     brandForm.reset();
@@ -575,12 +574,20 @@ window.addSocialLink = function(type, val = "") {
     container.appendChild(div);
 };
 
-// Exports
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = { loadSettings, handleSaveSettings, handleSaveProduct, renderProducts, escapeHtml };
-}
+// Theme Toggle
 window.toggleTheme = function() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     document.querySelectorAll('.theme-icon').forEach(icon => icon.textContent = isDark ? 'light_mode' : 'dark_mode');
 };
+
+// Exports for testing
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    loadSettings,
+    handleSaveSettings,
+    handleSaveProduct,
+    renderProducts,
+    escapeHtml
+  };
+}
