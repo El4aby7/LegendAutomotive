@@ -125,16 +125,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
             <!-- Action Buttons -->
             <div class="flex items-center gap-2 sm:gap-4 rtl:space-x-reverse">
-                <button onclick="toggleCurrency()" class="currency-toggle hidden md:flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold bg-surface-container-high hover:bg-primary hover:text-on-primary transition-colors text-on-surface">
-                    <span class="currency-text">L.E</span>
-                </button>
                 <a href="favorites.html" class="flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors" title="Favorites">
                     <span class="material-symbols-outlined">favorite</span>
                 </a>
-                <button onclick="toggleLanguage()" class="lang-toggle hidden md:flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors">
-                    <span class="font-bold text-sm">Ar</span>
-                </button>
-                </button>
                 <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden flex items-center justify-center rounded-full p-2 text-on-surface-variant hover:text-primary transition-colors">
                     <span class="material-symbols-outlined">menu</span>
@@ -159,7 +152,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <nav class="flex flex-col space-y-6">
                 <a href="index.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_home">Home</a>
                 <a href="inventory.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_inventory">Explore</a>
-                <a href="about.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_about">About</a>
                 <a href="favorites.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors">Favorites</a>
                 <a href="contact.html" class="text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors" data-i18n="nav_contact">Contact</a>
                 <button onclick="toggleLanguage()" class="text-left text-2xl font-headline font-bold text-on-surface hover:text-primary transition-colors flex justify-between items-center group">
@@ -176,20 +168,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <a id="drawer-social-instagram" href="#" class="text-neutral-500 hover:text-primary transition-all duration-300 hover:scale-110 active:scale-95"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
         <a id="drawer-social-facebook" href="#" class="text-neutral-500 hover:text-primary transition-all duration-300 hover:scale-110 active:scale-95"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
         <a id="drawer-social-tiktok" href="#" class="text-neutral-500 hover:text-primary transition-all duration-300 hover:scale-110 active:scale-95"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg></a>
+        <a id="drawer-social-whatsapp" href="#" class="text-neutral-500 hover:text-primary transition-all duration-300 hover:scale-110 active:scale-95"><svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
     </div>
 </div>
 
 
-    <div class="px-4 py-4 border-t border-outline-variant/15 flex flex-col gap-2">
-        <button onclick="toggleCurrency()" class="currency-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-            <span>Currency</span>
-            <span class="currency-text font-bold bg-surface-container-high px-2 py-0.5 rounded text-xs">L.E</span>
-        </button>
-        <button onclick="toggleLanguage()" class="lang-toggle flex items-center justify-between w-full px-3 py-2 rounded-md text-base font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors">
-            <span>Language</span>
-            <span class="font-bold text-sm">Ar</span>
-        </button>
-    </div>
 </div>
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
@@ -628,15 +611,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-4">
     <!-- Popup Menu -->
     <div id="contact-popup" class="hidden flex-col gap-3 bg-surface-container-highest/90 backdrop-blur-md p-4 rounded-2xl border border-outline-variant/20 shadow-2xl origin-bottom-right transition-all duration-300 transform scale-95 opacity-0">
-        <a href="https://wa.me/#" target="_blank" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
+        <a id="social-whatsapp" href="https://wa.me/#" target="_blank" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
             <div class="w-10 h-10 rounded-full bg-[#25D366]/20 flex items-center justify-center text-[#25D366] group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined">chat</span>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
             </div>
             <span class="font-headline font-semibold text-sm">WhatsApp Us</span>
         </a>
-        <a href="tel:#" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
+        <a id="social-phone" href="tel:#" class="flex items-center gap-3 text-on-surface hover:text-primary transition-colors p-2 rounded-lg hover:bg-surface-bright group">
             <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                <span class="material-symbols-outlined">call</span>
+                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l2.28-2.28a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
             </div>
             <span class="font-headline font-semibold text-sm">Call Us</span>
         </a>

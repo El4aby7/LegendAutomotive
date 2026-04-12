@@ -287,6 +287,8 @@ async function loadGlobalSettings() {
         applyLink('footer-social-instagram', 'instagram_link', 'link');
         applyLink('footer-social-facebook', 'facebook_link', 'link');
         applyLink('footer-social-tiktok', 'tiktok_link', 'link');
+        applyLink('footer-social-whatsapp', 'whatsapp_number', 'whatsapp');
+        applyLink('drawer-social-whatsapp', 'whatsapp_number', 'whatsapp');
         applyLink('contact-phone', 'phone_number', 'phone');
 
         const mapContainer = document.getElementById('map-container');
