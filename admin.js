@@ -20,6 +20,10 @@ const escapeHtml = (unsafe) => {
   return unsafe.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
 };
 
+const sanitizeFilename = (name) => {
+    return name.replace(/[^a-z0-9.]/gi, '-').replace(/-+/g, '-').toLowerCase();
+};
+
 // --- UI Utilities ---
 window.showToast = function (message, type = "success") {
   const existing = document.getElementById("custom-toast");
@@ -203,8 +207,9 @@ async function handleGalleryUpload(e) {
 
     try {
         const uploadPromises = files.map(async file => {
-            const path = `gallery/${Date.now()}-${file.name}`;
-            await window.supabase.storage.from("vehicle-images").upload(path, file);
+            const path = `gallery/${Date.now()}-${sanitizeFilename(file.name)}`;
+            const { error } = await window.supabase.storage.from("vehicle-images").upload(path, file, { upsert: true });
+            if (error) throw error;
             return window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
         });
 
@@ -425,15 +430,17 @@ async function handleSaveProduct(e) {
 
         const file = document.getElementById("p-image").files[0];
         if (file) {
-            const path = `public/${Date.now()}-${file.name}`;
-            await window.supabase.storage.from("vehicle-images").upload(path, file);
+            const path = `public/${Date.now()}-${sanitizeFilename(file.name)}`;
+            const { error } = await window.supabase.storage.from("vehicle-images").upload(path, file, { upsert: true });
+            if (error) throw error;
             payload.image_url = window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
         }
 
         const diag = document.getElementById("p-diagnostics").files[0];
         if (diag) {
-            const path = `diagnostics/${Date.now()}-${diag.name}`;
-            await window.supabase.storage.from("vehicle-images").upload(path, diag);
+            const path = `diagnostics/${Date.now()}-${sanitizeFilename(diag.name)}`;
+            const { error } = await window.supabase.storage.from("vehicle-images").upload(path, diag, { upsert: true });
+            if (error) throw error;
             payload.diagnostics_url = window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
         }
 
@@ -598,8 +605,9 @@ async function handleSaveBrand(e) {
         const payload = { name: document.getElementById("b-name").value };
         const file = document.getElementById("b-logo").files[0];
         if (file) {
-            const path = `brands/${Date.now()}-${file.name}`;
-            await window.supabase.storage.from("vehicle-images").upload(path, file);
+            const path = `brands/${Date.now()}-${sanitizeFilename(file.name)}`;
+            const { error } = await window.supabase.storage.from("vehicle-images").upload(path, file, { upsert: true });
+            if (error) throw error;
             payload.logo_url = window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
         }
         if (editingBrandId) await window.brandsDb.update(editingBrandId, payload);
@@ -705,8 +713,9 @@ async function handleSaveSettings(e) {
 
         const hero = document.getElementById("setting-hero-image").files[0];
         if (hero) {
-            const path = `settings/hero-${Date.now()}`;
-            await window.supabase.storage.from("vehicle-images").upload(path, hero);
+            const path = `settings/hero-${Date.now()}-${sanitizeFilename(hero.name)}`;
+            const { error } = await window.supabase.storage.from("vehicle-images").upload(path, hero, { upsert: true });
+            if (error) throw error;
             updates.push({ key: "hero_image", value: window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl });
         }
 
