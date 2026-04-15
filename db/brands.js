@@ -1,10 +1,15 @@
 const brandsDb = {
     async getAll() {
+        const cached = window.dbCache ? window.dbCache.get('brands_all') : null;
+        if (cached) return cached;
+        
         const { data, error } = await window.supabase
             .from('brands')
             .select('*')
             .order('name', { ascending: true });
         if (error) throw error;
+        
+        if (window.dbCache) window.dbCache.set('brands_all', data);
         return data;
     },
 
@@ -15,6 +20,7 @@ const brandsDb = {
             .select()
             .single();
         if (error) throw error;
+        if (window.dbCache) window.dbCache.clear('brands_all');
         return data;
     },
 
@@ -26,6 +32,7 @@ const brandsDb = {
             .select()
             .single();
         if (error) throw error;
+        if (window.dbCache) window.dbCache.clear('brands_all');
         return data;
     },
 
@@ -35,6 +42,7 @@ const brandsDb = {
             .delete()
             .eq('id', id);
         if (error) throw error;
+        if (window.dbCache) window.dbCache.clear('brands_all');
     }
 };
 

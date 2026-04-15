@@ -1,30 +1,60 @@
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+
+window.dbCache = {
+    get: (key) => {
+        const cached = localStorage.getItem(key);
+        if (!cached) return null;
+        try {
+            const { timestamp, data } = JSON.parse(cached);
+            if (Date.now() - timestamp < CACHE_TTL) return data;
+        } catch (e) {}
+        return null;
+    },
+    set: (key, data) => {
+        localStorage.setItem(key, JSON.stringify({ timestamp: Date.now(), data }));
+    },
+    clear: (...keys) => {
+        keys.forEach(k => localStorage.removeItem(k));
+    }
+};
+
 const productsDb = {
     async getAll() {
+        const cached = window.dbCache.get('products_all');
+        if (cached) return cached;
         const { data, error } = await window.supabase
             .from('products')
             .select('*, brands(*)')
             .order('order_explore', { ascending: true });
         if (error) throw error;
+        window.dbCache.set('products_all', data);
         return data;
     },
 
     async getSpotlight() {
+        const cached = window.dbCache.get('products_spotlight');
+        if (cached) return cached;
         const { data, error } = await window.supabase
             .from('products')
             .select('*, brands(*)')
             .eq('is_spotlight', true)
             .order('order_spotlight', { ascending: true });
         if (error) throw error;
+        window.dbCache.set('products_spotlight', data);
         return data;
     },
 
     async getById(id) {
+        const cacheKey = `products_id_${id}`;
+        const cached = window.dbCache.get(cacheKey);
+        if (cached) return cached;
         const { data, error } = await window.supabase
             .from('products')
             .select('*, brands(*)')
             .eq('id', id)
             .single();
         if (error) throw error;
+        window.dbCache.set(cacheKey, data);
         return data;
     },
 
@@ -35,6 +65,7 @@ const productsDb = {
             .select()
             .single();
         if (error) throw error;
+        window.dbCache.clear('products_all', 'products_spotlight');
         return data;
     },
 
@@ -46,6 +77,7 @@ const productsDb = {
             .select()
             .single();
         if (error) throw error;
+        window.dbCache.clear('products_all', 'products_spotlight', `products_id_${id}`);
         return data;
     },
 
@@ -55,6 +87,7 @@ const productsDb = {
             .delete()
             .eq('id', id);
         if (error) throw error;
+        window.dbCache.clear('products_all', 'products_spotlight', `products_id_${id}`);
     },
 
     async updateOrder(id, type, order) {
@@ -64,6 +97,7 @@ const productsDb = {
             .update({ [column]: order })
             .eq('id', id);
         if (error) throw error;
+        window.dbCache.clear('products_all', 'products_spotlight', `products_id_${id}`);
     }
 };
 
