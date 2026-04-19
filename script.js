@@ -76,15 +76,15 @@ async function init() {
     const path = window.location.pathname;
     if (path.endsWith("/") || path.endsWith('/')) {
         renderHome();
-    } else if (path.endsWith("/inventory")) {
+    } else if (path.endsWith("/LegendAutomotive/inventory")) {
         initInventory();
-    } else if (path.endsWith("/about")) {
+    } else if (path.endsWith("/LegendAutomotive/about")) {
         // About page - static content, no additional initialization needed
-    } else if (path.endsWith("/details")) {
+    } else if (path.endsWith("/LegendAutomotive/details")) {
         renderDetails();
-    } else if (path.endsWith("/contact")) {
+    } else if (path.endsWith("/LegendAutomotive/contact")) {
         initContact();
-    } else if (path.endsWith("/favorites")) {
+    } else if (path.endsWith("/LegendAutomotive/favorites")) {
         renderFavorites();
     }
 }
