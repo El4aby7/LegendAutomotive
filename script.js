@@ -17,7 +17,7 @@ let priceRange = { min: 0, max: 0, current: 0 };
 let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
 
 // --- UI Utilities ---
-window.showToast = function(message, type = 'success') {
+window.showToast = function (message, type = 'success') {
     const existing = document.getElementById('custom-toast');
     if (existing) existing.remove();
 
@@ -54,6 +54,10 @@ const escapeHtml = (unsafe) => {
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .catch(err => console.error('Service Worker registration failed:', err));
+    }
     init();
 });
 
@@ -70,15 +74,17 @@ async function init() {
     await loadProducts();
 
     const path = window.location.pathname;
-    if (path.endsWith('index.html') || path.endsWith('/')) {
+    if (path.endsWith("/") || path.endsWith('/')) {
         renderHome();
-    } else if (path.endsWith('inventory.html')) {
+    } else if (path.endsWith("/LegendAutomotive/inventory")) {
         initInventory();
-    } else if (path.endsWith('details.html')) {
+    } else if (path.endsWith("/LegendAutomotive/about")) {
+        // About page - static content, no additional initialization needed
+    } else if (path.endsWith("/LegendAutomotive/details")) {
         renderDetails();
-    } else if (path.endsWith('contact.html')) {
+    } else if (path.endsWith("/LegendAutomotive/contact")) {
         initContact();
-    } else if (path.endsWith('favorites.html')) {
+    } else if (path.endsWith("/LegendAutomotive/favorites")) {
         renderFavorites();
     }
 }
@@ -167,7 +173,7 @@ async function setLanguage(lang, shouldRender = true) {
     }
 }
 
-window.toggleLanguage = function() {
+window.toggleLanguage = function () {
     setLanguage(currentLang === 'en' ? 'ar' : 'en');
 }
 
@@ -210,7 +216,7 @@ function setCurrency(currency) {
 }
 window.setCurrency = setCurrency;
 
-window.toggleCurrency = function() {
+window.toggleCurrency = function () {
     setCurrency(currentCurrency === 'USD' ? 'EGP' : 'USD');
 }
 
@@ -253,7 +259,7 @@ async function loadGlobalSettings() {
             const val = settings[key];
             if (!val) return;
             let links = [];
-            try { links = JSON.parse(val); } catch(e) { links = [val]; }
+            try { links = JSON.parse(val); } catch (e) { links = [val]; }
             links = links.filter(l => l && l !== '#');
             if (links.length === 0) return;
 
@@ -345,7 +351,7 @@ function createProductCard(p) {
     return `
     <div class="group relative flex flex-col rounded-xl overflow-hidden bg-surface-container-low transition-all duration-500 hover:-translate-y-2 border border-outline-variant/10">
         <div class="relative aspect-[16/9] w-full overflow-hidden">
-            <a href="/details.html?id=${p.id}">
+            <a href="details.html?id=${p.id}">
                 <img src="${escapeHtml(p.image_url)}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${p.is_sold_out ? 'grayscale' : ''}">
                 ${p.is_sold_out ? `<div class="sold-out-stamp" data-i18n="sold_out">SOLD OUT</div>` : ''}
             </a>
@@ -361,14 +367,14 @@ function createProductCard(p) {
             ${p.version ? `<div class="absolute bottom-4 right-4 z-20 glass-card text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full border border-outline-variant/20">${p.version}</div>` : ''}
         </div>
         <div class="p-6 flex flex-col flex-grow">
-            <a href="/details.html?id=${p.id}" class="text-xl font-bold text-on-surface hover:text-primary transition-colors">${escapeHtml(name)}</a>
+            <a href="details.html?id=${p.id}" class="text-xl font-bold text-on-surface hover:text-primary transition-colors">${escapeHtml(name)}</a>
             <div class="flex items-center gap-3 text-xs text-on-surface-variant mt-4 font-medium">
                 <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">speed</span> ${p.mileage || '-'}</span>
                 <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">settings</span> ${p.transmission || '-'}</span>
             </div>
             <div class="mt-auto flex items-center justify-between pt-4 border-t border-outline-variant/15 mt-6">
                 <p class="text-2xl font-bold text-primary" data-price-egp="${p.price_egp || 0}">${p.is_upon_request ? (translations[currentLang]?.upon_request || "Upon Request") : formatPrice(p.price_egp || 0)}</p>
-                <a href="/details.html?id=${p.id}" class="text-xs font-bold text-primary flex items-center gap-1 uppercase tracking-widest" data-i18n="view_details">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+                <a href="details.html?id=${p.id}" class="text-xs font-bold text-primary flex items-center gap-1 uppercase tracking-widest" data-i18n="view_details">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
             </div>
         </div>
     </div>
@@ -378,7 +384,7 @@ function createProductCard(p) {
 function renderHome() {
     const container = document.getElementById('trending-container');
     if (!container) return;
-    const spotlight = products.filter(p => p.is_spotlight).sort((a,b) => a.order_spotlight - b.order_spotlight);
+    const spotlight = products.filter(p => p.is_spotlight).sort((a, b) => a.order_spotlight - b.order_spotlight);
     container.innerHTML = spotlight.map(p => createProductCard(p)).join('');
     updatePrices();
     updateDOMTranslations();
@@ -436,7 +442,7 @@ function initPriceSlider() {
         const pMin = ((curMin - absMin) / range) * 100;
         const pMax = ((curMax - absMin) / range) * 100;
 
-        fill.style.left  = pMin + '%';
+        fill.style.left = pMin + '%';
         fill.style.width = (pMax - pMin) + '%';
         minThumb.style.left = pMin + '%';
         maxThumb.style.left = pMax + '%';
@@ -486,9 +492,9 @@ function initPriceSlider() {
         document.addEventListener('touchend', onUp);
     }
 
-    minThumb.addEventListener('mousedown',  e => startDrag(e, true));
-    maxThumb.addEventListener('mousedown',  e => startDrag(e, false));
-    minThumb.addEventListener('touchstart', e => startDrag(e, true),  { passive: false });
+    minThumb.addEventListener('mousedown', e => startDrag(e, true));
+    maxThumb.addEventListener('mousedown', e => startDrag(e, false));
+    minThumb.addEventListener('touchstart', e => startDrag(e, true), { passive: false });
     maxThumb.addEventListener('touchstart', e => startDrag(e, false), { passive: false });
 
     updateUI();
@@ -512,7 +518,7 @@ function renderColorFilters() {
     const seen = new Map(); // hex -> name
     products.forEach(p => {
         let variants = p.color_variants || [];
-        if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch(e) { variants = []; } }
+        if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch (e) { variants = []; } }
         variants.forEach(v => {
             if (v.hex && !seen.has(v.hex)) {
                 seen.set(v.hex, currentLang === 'ar' && v.name_ar ? v.name_ar : (v.name || v.hex));
@@ -536,7 +542,7 @@ function renderColorFilters() {
     `).join('');
 }
 
-window.toggleColorFilter = function(hex, btn) {
+window.toggleColorFilter = function (hex, btn) {
     const idx = activeColorFilters.indexOf(hex);
     if (idx === -1) activeColorFilters.push(hex);
     else activeColorFilters.splice(idx, 1);
@@ -544,7 +550,7 @@ window.toggleColorFilter = function(hex, btn) {
     filterInventory();
 };
 
-window.toggleBrandFilter = function(id, btn) {
+window.toggleBrandFilter = function (id, btn) {
     const idx = activeBrandFilters.indexOf(id);
     if (idx === -1) activeBrandFilters.push(id);
     else activeBrandFilters.splice(idx, 1);
@@ -568,13 +574,13 @@ function filterInventory() {
         let matchesColor = true;
         if (activeColorFilters.length > 0) {
             let variants = p.color_variants || [];
-            if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch(e) { variants = []; } }
+            if (typeof variants === 'string') { try { variants = JSON.parse(variants); } catch (e) { variants = []; } }
             const productHexes = variants.map(v => v.hex).filter(Boolean);
             matchesColor = activeColorFilters.some(h => productHexes.includes(h));
         }
 
         return matchesTerm && matchesCat && matchesBrand && matchesPrice && matchesColor;
-    }).sort((a,b) => a.order_explore - b.order_explore);
+    }).sort((a, b) => a.order_explore - b.order_explore);
 
     const container = document.getElementById('inventory-container');
     if (container) {
@@ -637,20 +643,101 @@ async function renderDetails() {
     const mainImg = document.getElementById('main-image');
     if (mainImg) mainImg.src = p.image_url;
 
+    // Image Slider Logic
+    let currentGalleryIndex = 0;
+    let currentGalleryImages = [];
+    let galleryInterval = null;
+
+    function startGalleryAutoplay() {
+        if (galleryInterval) clearInterval(galleryInterval);
+        if (currentGalleryImages.length > 1) {
+            galleryInterval = setInterval(() => {
+                window.nextImage();
+            }, 3000);
+        }
+    }
+
+    function stopGalleryAutoplay() {
+        if (galleryInterval) clearInterval(galleryInterval);
+    }
+
+    window.nextImage = function () {
+        if (currentGalleryImages.length <= 1) return;
+        currentGalleryIndex = (currentGalleryIndex + 1) % currentGalleryImages.length;
+        updateMainImage();
+        startGalleryAutoplay(); // Reset interval
+    };
+
+    window.prevImage = function () {
+        if (currentGalleryImages.length <= 1) return;
+        currentGalleryIndex = (currentGalleryIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+        updateMainImage();
+        startGalleryAutoplay();
+    };
+
+    function updateMainImage() {
+        if (!currentGalleryImages[currentGalleryIndex]) return;
+        document.getElementById('main-image').src = currentGalleryImages[currentGalleryIndex];
+
+        // Update thumbnails
+        document.querySelectorAll('#gallery-thumbnails button').forEach((b, idx) => {
+            if (idx === currentGalleryIndex) {
+                b.classList.add('border-primary');
+                b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else {
+                b.classList.remove('border-primary');
+            }
+        });
+    }
+
+    window.selectImage = function (idx) {
+        currentGalleryIndex = idx;
+        updateMainImage();
+        startGalleryAutoplay();
+    };
+
+    const mediaContainer = document.getElementById('main-media-container');
+    if (mediaContainer) {
+        mediaContainer.addEventListener('mouseenter', stopGalleryAutoplay);
+        mediaContainer.addEventListener('mouseleave', startGalleryAutoplay);
+    }
+
     // Helper: render gallery thumbnails for a given array of image URLs
     function renderGallery(images) {
         const thumbnails = document.getElementById('gallery-thumbnails');
+        const prevBtn = document.getElementById('btn-prev-img');
+        const nextBtn = document.getElementById('btn-next-img');
+
         if (!thumbnails) return;
-        const imgs = images && images.length ? images : (p.gallery || []);
-        if (imgs.length === 0) { thumbnails.innerHTML = ''; return; }
-        thumbnails.innerHTML = imgs.map(url => `
-            <button onclick="document.getElementById('main-image').src='${url}'; document.querySelectorAll('#gallery-thumbnails button').forEach(b=>b.classList.remove('border-primary')); this.classList.add('border-primary')" class="w-24 flex-shrink-0 aspect-video rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary transition-all">
-                <img src="${url}" class="w-full h-full object-cover">
+        currentGalleryImages = images && images.length ? images : (p.gallery || []);
+        currentGalleryIndex = 0;
+
+        if (currentGalleryImages.length === 0) {
+            thumbnails.innerHTML = '';
+            if (prevBtn) prevBtn.classList.add('hidden');
+            if (nextBtn) nextBtn.classList.add('hidden');
+            stopGalleryAutoplay();
+            return;
+        }
+
+        if (prevBtn && nextBtn) {
+            if (currentGalleryImages.length > 1) {
+                prevBtn.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+            } else {
+                prevBtn.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
+        }
+
+        thumbnails.innerHTML = currentGalleryImages.map((url, idx) => `
+            <button onclick="window.selectImage(${idx})" class="w-24 flex-shrink-0 aspect-video rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary transition-all">
+                <img src="${escapeHtml(url)}" class="w-full h-full object-cover">
             </button>
         `).join('');
-        // Set first thumbnail as active
-        const first = thumbnails.querySelector('button');
-        if (first) first.classList.add('border-primary');
+
+        updateMainImage();
+        startGalleryAutoplay();
     }
 
     // Render default gallery (product main gallery)
@@ -658,7 +745,7 @@ async function renderDetails() {
 
     // Color variants swatches
     let colorVariants = p.color_variants || [];
-    if (typeof colorVariants === 'string') { try { colorVariants = JSON.parse(colorVariants); } catch(e) { colorVariants = []; } }
+    if (typeof colorVariants === 'string') { try { colorVariants = JSON.parse(colorVariants); } catch (e) { colorVariants = []; } }
 
     const colorContainer = document.getElementById('color-selection-container');
     const colorOptions = document.getElementById('color-options');
@@ -689,7 +776,7 @@ async function renderDetails() {
             renderGallery(colorVariants[0].gallery);
         }
 
-        window.selectColorVariant = function(idx) {
+        window.selectColorVariant = function (idx) {
             const v = colorVariants[idx];
             if (!v) return;
             // Update swatch selection
@@ -758,17 +845,17 @@ async function renderDetails() {
 }
 
 // --- Details Page Modals ---
-window.openInquiryModal = function() {
+window.openInquiryModal = function () {
     const modal = document.getElementById('inquiry-modal');
     if (modal) modal.classList.remove('hidden');
 };
 
-window.closeInquiryModal = function() {
+window.closeInquiryModal = function () {
     const modal = document.getElementById('inquiry-modal');
     if (modal) modal.classList.add('hidden');
 };
 
-window.toggleDescription = function() {
+window.toggleDescription = function () {
     const wrapper = document.getElementById('vehicle-desc-wrapper');
     const fade = document.getElementById('vehicle-desc-fade');
     const btnText = document.querySelector('#btn-read-more [data-i18n]');
@@ -786,7 +873,7 @@ window.toggleDescription = function() {
         if (icon) icon.textContent = 'expand_less';
     }
 };
-window.closeDescriptionModal = () => {};
+window.closeDescriptionModal = () => { };
 
 function initContact() {
     const form = document.getElementById('contact-form');
@@ -820,7 +907,7 @@ function initContact() {
     updateDOMTranslations();
 }
 
-window.toggleFavorite = function(id, btn) {
+window.toggleFavorite = function (id, btn) {
     const idx = favorites.indexOf(id);
     if (idx === -1) {
         favorites.push(id);
@@ -839,12 +926,12 @@ window.toggleFavorite = function(id, btn) {
     }
     localStorage.setItem('favorites', JSON.stringify(favorites));
 
-    if (window.location.pathname.endsWith('favorites.html')) {
+    if (window.location.pathname.endsWith("/favorites")) {
         renderFavorites();
     }
 };
 
-window.toggleFavoriteDetails = function() {
+window.toggleFavoriteDetails = function () {
     const params = new URLSearchParams(window.location.search);
     const id = parseInt(params.get('id'));
     if (!id) return;

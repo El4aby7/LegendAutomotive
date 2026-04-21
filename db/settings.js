@@ -1,5 +1,8 @@
 const settingsDb = {
     async getAll() {
+        const cached = window.dbCache ? window.dbCache.get('settings_all') : null;
+        if (cached) return cached;
+
         const { data, error } = await window.supabase
             .from('settings')
             .select('*');
@@ -9,6 +12,8 @@ const settingsDb = {
         data.forEach(item => {
             settings[item.key] = item.value;
         });
+        
+        if (window.dbCache) window.dbCache.set('settings_all', settings);
         return settings;
     },
 
@@ -19,6 +24,7 @@ const settingsDb = {
             .select()
             .single();
         if (error) throw error;
+        if (window.dbCache) window.dbCache.clear('settings_all');
         return data;
     },
 
@@ -31,6 +37,7 @@ const settingsDb = {
             })))
             .select();
         if (error) throw error;
+        if (window.dbCache) window.dbCache.clear('settings_all');
         return data;
     }
 };
