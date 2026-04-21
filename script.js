@@ -818,12 +818,17 @@ async function renderDetails() {
             btn.textContent = 'Sending...';
             btn.disabled = true;
 
+            const inqPhone = document.getElementById('inq-phone').value.trim();
+            let finalMessage = document.getElementById('inq-message').value.trim();
+            if (inqPhone) {
+                finalMessage += `\n\nPhone: ${inqPhone}`;
+            }
+
             const payload = {
-                name: document.getElementById('inq-name').value,
-                email: document.getElementById('inq-email').value,
-                phone: document.getElementById('inq-phone').value,
-                subject: 'Inquiry for ' + p.name,
-                message: document.getElementById('inq-message').value
+                name: document.getElementById('inq-name').value.trim(),
+                email: document.getElementById('inq-email').value.trim(),
+                subject: 'Inquiry for ' + (p ? p.name : 'Vehicle'),
+                message: finalMessage
             };
 
             try {
@@ -886,10 +891,10 @@ function initContact() {
             btn.disabled = true;
 
             const payload = {
-                name: document.getElementById('c-name').value,
-                email: document.getElementById('c-email').value,
-                subject: document.getElementById('c-interest').value,
-                message: document.getElementById('c-message').value
+                name: document.getElementById('c-name').value.trim(),
+                email: document.getElementById('c-email').value.trim(),
+                subject: document.getElementById('c-interest').value.trim(),
+                message: document.getElementById('c-message').value.trim()
             };
 
             try {
