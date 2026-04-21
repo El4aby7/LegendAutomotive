@@ -356,7 +356,7 @@ async function loadCategories() {
 }
 
 // --- Rendering ---
-function createProductCard(p) {
+function createProductCard(p, index = 0) {
     const isAr = currentLang === 'ar';
     const name = isAr && p.name_ar ? p.name_ar : p.name;
     const fav = favorites.includes(p.id);
@@ -370,9 +370,9 @@ function createProductCard(p) {
 
     return `
     <div class="group relative flex flex-col rounded-xl overflow-hidden bg-surface-container-low transition-all duration-500 hover:-translate-y-2 border border-outline-variant/10">
-        <div class="relative aspect-[16/9] w-full overflow-hidden">
+        <div class="relative aspect-[16/9] w-full overflow-hidden bg-surface-container-high animate-pulse" id="skel-${p.id}">
             <a href="/details?id=${p.id}">
-                <img src="${escapeHtml(p.image_url)}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${p.is_sold_out ? 'grayscale' : ''}">
+                <img src="${escapeHtml(p.image_url)}" ${index < 6 ? '' : 'loading="lazy" decoding="async"'} class="absolute inset-0 w-full h-full object-cover transition-all duration-700 opacity-0 group-hover:scale-105 ${p.is_sold_out ? 'grayscale' : ''}" onload="this.classList.remove('opacity-0'); document.getElementById('skel-${p.id}')?.classList.remove('animate-pulse');">
                 ${p.is_sold_out ? `<div class="sold-out-stamp" data-i18n="sold_out">SOLD OUT</div>` : ''}
             </a>
             <div class="absolute top-4 right-4 z-20">
@@ -405,7 +405,7 @@ function renderHome() {
     const container = document.getElementById('trending-container');
     if (!container) return;
     const spotlight = products.filter(p => p.is_spotlight).sort((a, b) => a.order_spotlight - b.order_spotlight);
-    container.innerHTML = spotlight.map(p => createProductCard(p)).join('');
+    container.innerHTML = spotlight.map((p, ix) => createProductCard(p, ix)).join('');
     updatePrices();
     updateDOMTranslations();
 }
@@ -622,7 +622,7 @@ function filterInventory() {
                 </div>
             `;
         } else {
-            container.innerHTML = filtered.map(p => createProductCard(p)).join('');
+            container.innerHTML = filtered.map((p, ix) => createProductCard(p, ix)).join('');
         }
         updatePrices();
         updateDOMTranslations();
@@ -719,10 +719,16 @@ async function renderDetails() {
         document.getElementById('main-image').src = currentGalleryImages[currentGalleryIndex];
 
         // Update thumbnails
+        const container = document.getElementById('gallery-thumbnails');
         document.querySelectorAll('#gallery-thumbnails button').forEach((b, idx) => {
             if (idx === currentGalleryIndex) {
                 b.classList.add('border-primary');
-                b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                if (container) {
+                    container.scrollTo({
+                        left: b.offsetLeft - container.offsetWidth / 2 + b.offsetWidth / 2,
+                        behavior: 'smooth'
+                    });
+                }
             } else {
                 b.classList.remove('border-primary');
             }
@@ -1017,7 +1023,7 @@ function renderFavorites() {
                 <a href="/inventory" class="gold-shimmer text-on-primary px-8 py-3 rounded-lg font-bold shadow-lg hover:brightness-110 transition-all">Explore Inventory</a>
             </div>`;
     } else {
-        container.innerHTML = favProducts.map(p => createProductCard(p)).join('');
+        container.innerHTML = favProducts.map((p, ix) => createProductCard(p, ix)).join('');
     }
     updatePrices();
     updateDOMTranslations();
