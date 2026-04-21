@@ -372,7 +372,7 @@ function createProductCard(p, index = 0) {
     <div class="group relative flex flex-col rounded-xl overflow-hidden bg-surface-container-low transition-all duration-500 hover:-translate-y-2 border border-outline-variant/10">
         <div class="relative aspect-[16/9] w-full overflow-hidden bg-surface-container-high animate-pulse" id="skel-${p.id}">
             <a href="/details?id=${p.id}">
-                <img src="${escapeHtml(p.image_url)}" ${index < 6 ? '' : 'loading="lazy" decoding="async"'} class="absolute inset-0 w-full h-full object-cover transition-all duration-300 opacity-0 group-hover:scale-105 ${p.is_sold_out ? 'grayscale' : ''}" onload="this.classList.remove('opacity-0'); document.getElementById('skel-${p.id}')?.classList.remove('animate-pulse');">
+                <img src="${escapeHtml(p.image_url)}" ${index < 4 ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'} class="absolute inset-0 w-full h-full object-cover transition-all duration-300 group-hover:scale-105 ${p.is_sold_out ? 'grayscale' : ''}" onload="document.getElementById('skel-${p.id}')?.classList.remove('animate-pulse');">
                 ${p.is_sold_out ? `<div class="sold-out-stamp" data-i18n="sold_out">SOLD OUT</div>` : ''}
             </a>
             <div class="absolute top-4 right-4 z-20">
@@ -777,7 +777,7 @@ async function renderDetails() {
 
         thumbnails.innerHTML = currentGalleryImages.map((url, idx) => `
             <button onclick="window.selectImage(${idx})" class="w-24 flex-shrink-0 aspect-video rounded-lg overflow-hidden border border-outline-variant/20 hover:border-primary transition-all">
-                <img src="${escapeHtml(url)}" class="w-full h-full object-cover">
+                <img src="${escapeHtml(url)}" loading="lazy" decoding="async" class="w-full h-full object-cover">
             </button>
         `).join('');
 
