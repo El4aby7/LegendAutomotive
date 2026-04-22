@@ -49,7 +49,7 @@
                         </div>
                         <div class="relative rtl:text-right">
                             <label class="block text-on-surface-variant text-xs uppercase tracking-widest font-semibold mb-2 ml-1" data-i18n="email_address">Email Address</label>
-                            <input class="w-full bg-surface-container-lowest border-none p-4 text-on-surface placeholder-neutral-700 focus:ring-0 transition-all duration-300" id="c-email" placeholder="john@example.com" required type="email"/>
+                            <input class="w-full bg-surface-container-lowest border-none p-4 text-on-surface placeholder-neutral-700 focus:ring-0 transition-all duration-300" id="c-email" placeholder="john@example.com" required type="email" oninput="this.value=this.value.replace(/\s/g, '')"/>
                         </div>
                     </div>
                     <div class="relative rtl:text-right">
