@@ -977,7 +977,7 @@ function initContact() {
                 return;
             }
 
-            const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(payload.email)) {
                 showToast(translations[currentLang]?.invalid_email || 'Please enter a valid email address.', 'error');
                 btn.textContent = originalText;

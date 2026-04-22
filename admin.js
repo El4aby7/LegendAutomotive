@@ -34,6 +34,40 @@ const sanitizeFilename = (name) => {
     return name.replace(/[^a-z0-9.]/gi, '-').replace(/-+/g, '-').toLowerCase();
 };
 
+async function compressImageClient(file, maxDimension = 1920) {
+    if (!file || !file.type.startsWith('image/')) return file;
+    if (file.type === 'image/gif' || file.type === 'image/svg+xml') return file;
+
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width;
+                let h = img.height;
+                if (w > maxDimension || h > maxDimension) {
+                    if (w > h) { h = Math.round((h * maxDimension) / w); w = maxDimension; }
+                    else { w = Math.round((w * maxDimension) / h); h = maxDimension; }
+                } else {
+                    return resolve(file);
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                canvas.toBlob((blob) => {
+                    if (!blob) return resolve(file);
+                    resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                }, 'image/jpeg', 0.8);
+            };
+            img.onerror = () => resolve(file);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+    });
+}
+
 // --- UI Utilities ---
 window.showToast = function (message, type = "success") {
   const existing = document.getElementById("custom-toast");
@@ -217,14 +251,15 @@ async function handleGalleryUpload(e) {
     showToast(`Uploading ${files.length} images...`);
 
     try {
-        const uploadPromises = files.map(async file => {
+        const urls = [];
+        for (const rawFile of files) {
+            const file = await compressImageClient(rawFile);
             const path = `gallery/${Date.now()}-${sanitizeFilename(file.name)}`;
             const { error } = await window.supabase.storage.from("vehicle-images").upload(path, file, { upsert: true });
             if (error) throw error;
-            return window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl;
-        });
+            urls.push(window.supabase.storage.from("vehicle-images").getPublicUrl(path).data.publicUrl);
+        }
 
-        const urls = await Promise.all(uploadPromises);
         currentGallery = [...currentGallery, ...urls];
         renderGalleryPreview();
         showToast("Gallery updated");
@@ -514,12 +549,14 @@ window.handleVariantGalleryUpload = async (variantIdx, input) => {
     if (!files.length) return;
     showToast(`Uploading ${files.length} image(s)...`);
     try {
-        const urls = await Promise.all(files.map(async file => {
+        const urls = [];
+        for (const rawFile of files) {
+            const file = await compressImageClient(rawFile);
             const path = `gallery/${Date.now()}-${sanitizeFilename(file.name)}`;
             const { error } = await window.supabase.storage.from('vehicle-images').upload(path, file, { upsert: true });
             if (error) throw error;
-            return window.supabase.storage.from('vehicle-images').getPublicUrl(path).data.publicUrl;
-        }));
+            urls.push(window.supabase.storage.from('vehicle-images').getPublicUrl(path).data.publicUrl);
+        }
         currentColorVariants[variantIdx].gallery = [...currentColorVariants[variantIdx].gallery, ...urls];
         renderColorVariants();
         showToast('Gallery updated');
@@ -552,8 +589,9 @@ async function handleSaveProduct(e) {
             color_variants: currentColorVariants
         };
 
-        const file = document.getElementById("p-image").files[0];
+        let file = document.getElementById("p-image").files[0];
         if (file) {
+            file = await compressImageClient(file);
             const path = `public/${Date.now()}-${sanitizeFilename(file.name)}`;
             const { error } = await window.supabase.storage.from("vehicle-images").upload(path, file, { upsert: true });
             if (error) throw error;
@@ -738,8 +776,9 @@ async function handleSaveBrand(e) {
     btn.disabled = true;
     try {
         const payload = { name: document.getElementById("b-name").value };
-        const file = document.getElementById("b-logo").files[0];
+        let file = document.getElementById("b-logo").files[0];
         if (file) {
+            file = await compressImageClient(file);
             const path = `brands/${Date.now()}-${sanitizeFilename(file.name)}`;
             const { error } = await window.supabase.storage.from("vehicle-images").upload(path, file, { upsert: true });
             if (error) throw error;

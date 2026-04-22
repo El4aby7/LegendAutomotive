@@ -11,9 +11,7 @@ const messagesDb = {
     async create(message) {
         const { data, error } = await window.supabase
             .from('messages')
-            .insert(message)
-            .select()
-            .single();
+            .insert(message);
         if (error) throw error;
         return data;
     },
