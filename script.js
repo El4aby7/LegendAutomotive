@@ -343,6 +343,13 @@ async function loadGlobalSettings() {
             document.getElementById('hero-bg-image').classList.remove('hidden');
         }
 
+        if (settings.active_event && settings.active_event !== 'none') {
+            document.body.className = document.body.className.replace(/\btheme-[a-z0-9_-]+\b/g, '').trim();
+            document.body.classList.add(`theme-${settings.active_event}`);
+        } else {
+            document.body.className = document.body.className.replace(/\btheme-[a-z0-9_-]+\b/g, '').trim();
+        }
+
         // Live updates
         if (!window.settingsSubscribed) {
             window.settingsSubscribed = true;
@@ -403,7 +410,14 @@ function createProductCard(p, index = 0) {
                 <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]">settings</span> ${p.transmission || '-'}</span>
             </div>
             <div class="mt-auto flex items-center justify-between pt-4 border-t border-outline-variant/15 mt-6">
-                <p class="text-2xl font-bold text-primary" data-price-egp="${p.price_egp || 0}">${p.is_upon_request ? (translations[currentLang]?.upon_request || "Upon Request") : formatPrice(p.price_egp || 0)}</p>
+                <div class="flex flex-col">
+                    ${p.discount_price && p.discount_price > 0 && !p.is_upon_request ? 
+                        `<p class="text-sm font-bold text-on-surface-variant line-through opacity-70" data-price-egp="${p.price_egp || 0}">${formatPrice(p.price_egp || 0)}</p>
+                         <p class="text-2xl font-bold text-red-500" data-price-egp="${p.discount_price}">${formatPrice(p.discount_price)}</p>` 
+                        : 
+                        `<p class="text-2xl font-bold text-primary" data-price-egp="${p.price_egp || 0}">${p.is_upon_request ? (translations[currentLang]?.upon_request || "Upon Request") : formatPrice(p.price_egp || 0)}</p>`
+                    }
+                </div>
                 <a href="/details?id=${p.id}" class="text-xs font-bold text-primary flex items-center gap-1 uppercase tracking-widest" data-i18n="view_details">Explore <span class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
             </div>
         </div>
@@ -418,6 +432,13 @@ function renderHome() {
     container.innerHTML = spotlight.map((p, ix) => createProductCard(p, ix)).join('');
     updatePrices();
     updateDOMTranslations();
+
+    if (window.innerWidth < 768) {
+        setTimeout(() => {
+            const spotlightSec = document.getElementById('spotlight-section');
+            if (spotlightSec) spotlightSec.scrollIntoView({ behavior: 'smooth' });
+        }, 2000);
+    }
 }
 
 async function initInventory() {
@@ -668,7 +689,21 @@ async function renderDetails() {
 
     document.getElementById('vehicle-title').textContent = currentLang === 'ar' && p.name_ar ? p.name_ar : p.name;
     document.getElementById('vehicle-title-crumb').textContent = document.getElementById('vehicle-title').textContent;
-    document.getElementById('vehicle-price').setAttribute('data-price-egp', p.is_upon_request ? 0 : (p.price_egp || 0));
+    
+    const priceContainer = document.getElementById('vehicle-price').parentElement;
+    if (p.discount_price && p.discount_price > 0 && !p.is_upon_request) {
+        priceContainer.innerHTML = `
+            <p class="text-gray-500 dark:text-[#97b7c4] text-sm font-medium mb-1" data-i18n="selling_price">Selling Price</p>
+            <p class="text-xl font-bold text-on-surface-variant line-through opacity-70" data-price-egp="${p.price_egp || 0}">${formatPrice(p.price_egp || 0)}</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-red-500 dark:text-red-500" id="vehicle-price" data-price-egp="${p.discount_price}">${formatPrice(p.discount_price)}</h2>
+        `;
+    } else {
+        priceContainer.innerHTML = `
+            <p class="text-gray-500 dark:text-[#97b7c4] text-sm font-medium mb-1" data-i18n="selling_price">Selling Price</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-black dark:text-black" id="vehicle-price" data-price-egp="${p.is_upon_request ? 0 : (p.price_egp || 0)}">${p.is_upon_request ? (translations[currentLang]?.upon_request || "Upon Request") : formatPrice(p.price_egp || 0)}</h2>
+        `;
+    }
+    
     document.getElementById('vehicle-desc').textContent = currentLang === 'ar' && p.description_ar ? p.description_ar : p.description;
 
     const favBtn = document.getElementById('btn-favorite-details');

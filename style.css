@@ -285,3 +285,27 @@ input:focus, textarea:focus, select:focus {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Event Themes */
+body.theme-ramadan {
+    --color-primary: #d4af37;
+    background-color: #0f0a02;
+    background-image: radial-gradient(circle at 50% top, rgba(212, 175, 55, 0.1) 0%, transparent 60%);
+}
+body.theme-ramadan .gold-shimmer {
+    background: linear-gradient(135deg, #d4af37 0%, #a67c00 100%);
+}
+
+body.theme-eid {
+    --color-primary: #f2ca50;
+    background-color: #1a1515;
+    background-image: radial-gradient(circle at 50% top, rgba(242, 202, 80, 0.15) 0%, transparent 60%);
+}
+
+body.theme-national {
+    --color-primary: #ce1126; /* Egypt Red */
+    background-color: #141414;
+    background-image: linear-gradient(to bottom, rgba(206, 17, 38, 0.05) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(0, 0, 0, 0.1) 100%);
+}
+body.theme-national .gold-shimmer {
+    background: linear-gradient(135deg, #ce1126 0%, #8b0000 100%);
+}

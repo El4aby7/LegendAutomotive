@@ -574,6 +574,7 @@ async function handleSaveProduct(e) {
             name: document.getElementById("p-name").value,
             name_ar: document.getElementById("p-name-ar").value,
             price_egp: parseFloat(document.getElementById("p-price").value),
+            discount_price: document.getElementById("p-discount").value ? parseFloat(document.getElementById("p-discount").value) : null,
             category: document.getElementById("p-category").value,
             origin: document.getElementById("p-origin").value,
             brand_id: parseInt(document.getElementById("p-brand-id").value),
@@ -657,6 +658,7 @@ function openModal(p = null) {
         document.getElementById("p-name").value = p.name || "";
         document.getElementById("p-name-ar").value = p.name_ar || "";
         document.getElementById("p-price").value = p.price_egp || "";
+        document.getElementById("p-discount").value = p.discount_price || "";
         document.getElementById("p-category").value = p.category || "";
         document.getElementById("p-origin").value = p.origin || "";
         document.getElementById("p-brand-id").value = p.brand_id || "";
