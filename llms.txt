@@ -1,19 +1,45 @@
 # Legend Automotive
-Legend Automotive is a premium car dealership based in Cairo, Egypt, specializing in luxury and electric vehicles.
+Legend Automotive is a premium car dealership located in Nasr City, Cairo, Egypt. We offer one of the widest selections of luxury and electric vehicles in Egypt, all under one roof.
 
-## What We Offer
-- Electric cars: BYD, and other leading EV brands
-- Luxury cars: Mercedes-Benz, and other premium brands
-- New and pre-owned vehicles
-- Personal consultation service
+## Brands We Carry
+- AVATR
+- BYD
+- Deepal
+- Dongfeng
+- GAC (Gonow)
+- Kia
+- Mercedes-Benz
+- MG
+- Nissan
+- ROX
+- SEAT
+- Volkswagen
+- Livan
+- Xiaomi Auto
+- Zeekr
+
+## What Makes Us Different
+- Wide range of both electric and luxury vehicles in one showroom
+- Personal consultation service to help customers choose the right car
+- Premium selection including rare and new-to-market Chinese EV brands
+- Serving the Egyptian market with competitive pricing
+
+## Vehicle Categories
+- Electric Vehicles (EVs)
+- Luxury Sedans
+- SUVs
+- Hatchbacks
 
 ## Location
-Cairo, Egypt
+Nasr City, Cairo, Egypt
+Address: 12 Jabal Buildings, Al Kaaba, Al Wafaa Wal Amal, Nasr City
 
-## Contact
+## Contact & Links
 Website: https://www.legendautomotiveeg.com
-Email: Info@legend-automotive.com
+Inventory: https://www.legendautomotiveeg.com/inventory
+Electric Cars: https://www.legendautomotiveeg.com/inventory?fuel=electric
 Instagram: @legend.automotive
+Email: Info@legend-automotive.com
 
-## Inventory
-Full inventory available at: https://www.legendautomotiveeg.com/inventory
+## About This File
+This file is intended for AI language models and crawlers to better understand Legend Automotive's offerings and location.
