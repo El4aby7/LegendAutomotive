@@ -496,6 +496,8 @@ async function initInventory() {
     if (query && searchInput) {
         searchInput.value = query;
     }
+    const brandParam = params.get('brand');
+    const categoryParam = params.get('category');
 
     // Fill category filter
     const categories = await loadCategories();
@@ -508,6 +510,17 @@ async function initInventory() {
             opt.textContent = currentLang === 'ar' && c.name_ar ? c.name_ar : c.name;
             catSelect.appendChild(opt);
         });
+        if (categoryParam) {
+            const matchedOption = Array.from(catSelect.options).find(o => o.value.toLowerCase() === categoryParam.toLowerCase());
+            if (matchedOption) catSelect.value = matchedOption.value;
+        }
+    }
+
+    if (brandParam) {
+        const matchedBrand = brands.find(b => b.name && b.name.toLowerCase() === brandParam.toLowerCase());
+        if (matchedBrand && !activeBrandFilters.includes(matchedBrand.id)) {
+            activeBrandFilters.push(matchedBrand.id);
+        }
     }
 
     renderBrandFilters();
